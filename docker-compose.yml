@@ -45,15 +45,22 @@ services:
       mailhog:
         condition: service_started
 
-  frontend:
+  frontend_angular:
     build:
       context: ./frontend_Angular
-      # context: ./frontend_React
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+  frontend_react:
+    build:
+      context: ./frontend_React
       dockerfile: Dockerfile
     ports:
       - "3000:80"
     depends_on:
       - backend
-
 volumes:
   pgdata:

@@ -72,7 +72,7 @@ async function translateText(inputs: Record<string, unknown>): Promise<AgentResp
   const toLang = (inputs.toLang as string) || 'en';
 
   // Simple mock: prepend language tag
-  const translated = toLang === 'en' ? text : `[${toLang.toUpperCase()}] ${text}` ;
+  const translated = toLang === 'en' ? text : `[${toLang.toUpperCase()}] ${text}`;
 
   return {
     status: 'success',
@@ -123,11 +123,12 @@ export async function executeAgent(endpointUrl: string, request: AgentRequest): 
     }
 
     if (!response.ok) {
+      console.error(`Agent at ${endpointUrl} returned error status:`, response.status, response.statusText);
       return {
         status: 'error',
         outputs: {},
         metrics: { durationMs: Date.now() - start },
-        logs: [`HTTP ${response.status}: ${response.statusText}`],
+        logs: [`HTTP ${response.status}: ${response.statusText} `],
         error: `Agent returned status ${response.status}`,
       };
     }
@@ -147,12 +148,12 @@ export async function executeAgent(endpointUrl: string, request: AgentRequest): 
       logs: [`External API responded with ${Object.keys(data).length} fields`],
     };
   } catch (err) {
-    console.error(`Error executing agent at ${endpointUrl}:`, err);
+    console.error(`Error executing agent at ${endpointUrl}: `, err);
     return {
       status: 'error',
       outputs: {},
       metrics: { durationMs: Date.now() - start },
-      logs: [`Error calling agent: ${(err as Error).message}`],
+      logs: [`Error calling agent: ${(err as Error).message} `],
       error: (err as Error).message,
     };
   }
