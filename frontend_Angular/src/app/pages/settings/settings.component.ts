@@ -20,10 +20,10 @@ export class SettingsComponent {
     return [
       {
         title: 'Profil',
-        description: "Informations de compte et identité de lâ€™utilisateur.",
+        description: "Informations de compte et identité de l'utilisateur.",
         items: [
           { label: 'Email', value: user?.email ?? 'Aucun utilisateur' },
-          { label: 'RÃ´le', value: user?.role ?? 'Invité' }
+          { label: 'Rôle', value: user?.role ?? 'Invité' }
         ] as SettingItem[]
       },
       {

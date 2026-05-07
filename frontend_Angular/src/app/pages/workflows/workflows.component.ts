@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { PageHeadingComponent } from '../../components/page-heading/page-heading.component';
@@ -35,8 +35,8 @@ export class WorkflowsComponent implements OnInit {
           name: workflow.name || 'Workflow inconnu',
           status: workflow.status || 'DRAFT',
           statusClass: this.getStatusClass(workflow.status),
-          description: workflow.description || 'Workflow importé depuis lâ€™API.',
-          updated: workflow.updatedAt ? new Date(workflow.updatedAt).toLocaleDateString('fr-FR') : 'â€”',
+          description: workflow.description || "Workflow importé depuis l'API.",
+          updated: workflow.updatedAt ? new Date(workflow.updatedAt).toLocaleDateString('fr-FR') : '—',
           tasks: workflow.nodes?.length ?? 0
         }));
         this.loading = false;

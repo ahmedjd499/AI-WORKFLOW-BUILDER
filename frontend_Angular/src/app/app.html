@@ -3,7 +3,8 @@
     <button type="button" class="sidebar-close" (click)="closeMobileSidebar()" aria-label="Fermer le menu">✕</button>
 
     <div class="sidebar-top-actions" *ngIf="auth.isAuthenticated">
-      <button type="button" class="collapse-button" (click)="toggleCollapse()" [title]="sidebarCollapsed() ? 'Etendre' : 'Reduire'">
+      <button type="button" class="collapse-button" (click)="toggleCollapse()"
+        [title]="sidebarCollapsed() ? 'Etendre' : 'Reduire'">
         {{ sidebarCollapsed() ? '⇥' : '⇤' }}
       </button>
     </div>
@@ -17,13 +18,8 @@
     </div>
 
     <nav class="nav-menu">
-      <a
-        *ngFor="let item of navItems()"
-        [routerLink]="item.path"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: item.path === '' }"
-        (click)="closeMobileSidebar()"
-      >
+      <a *ngFor="let item of navItems()" [routerLink]="item.path" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.path === '' }" (click)="closeMobileSidebar()">
         <span class="nav-icon">{{ item.icon }}</span>
         <span class="nav-copy">
           <strong>{{ item.label }}</strong>
@@ -68,11 +64,17 @@
         <img src="images/tek-up.png" alt="Logo TekUp" class="topbar-logo" />
         <div>
           <span class="topbar-kicker">TekUp Studio</span>
-          <h1>Orchestration intelligente</h1>
         </div>
       </div>
 
       <div class="topbar-spacer"></div>
+      <div class="topbar-actions" *ngIf="auth.isAuthenticated">
+        <div class="search">
+          <input type="text" placeholder="Rechercher..." aria-label="Recherche" />
+        </div>
+        <button type="button" class="btn-primary">Nouveau</button>
+        <button type="button" class="logout-button" (click)="logout()">{{ userInitial() }}</button>
+      </div>
     </header>
 
     <main class="main-content">

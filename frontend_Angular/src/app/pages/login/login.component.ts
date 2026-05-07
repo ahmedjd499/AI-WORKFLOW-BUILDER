@@ -1,4 +1,4 @@
-﻿import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -40,7 +40,7 @@ export class LoginComponent {
     this.authService.login(this.credentials).subscribe({
       next: () => {
         this.loading = false;
-        this.successMsg.set('Connexion réussie ! Redirection en coursâ€¦');
+        this.successMsg.set('Connexion réussie ! Redirection en cours');
         setTimeout(() => this.router.navigate(['/']), 1000);
       },
       error: () => {

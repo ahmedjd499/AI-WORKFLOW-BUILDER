@@ -93,8 +93,8 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
 
   runButtonLabel(): string {
     if (this.running()) return 'Exécution en cours...';
-    if (this.currentRun()) return 'â†º Relancer';
-    return 'â–¶ Lancer l\'exécution';
+    if (this.currentRun()) return ' Relancer';
+    return 'Lancer l\'exécution';
   }
 
   ngOnDestroy() {

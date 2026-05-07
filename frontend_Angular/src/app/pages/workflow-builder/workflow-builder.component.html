@@ -17,7 +17,7 @@
   <aside class="builder-sidebar">
     <div class="panel">
       <h3>{{ wf.name }}</h3>
-      <p>{{ wf.nodes.length }} nÅ“uds Â· {{ wf.edges.length }} liaisons Â· v{{ wf.version }}</p>
+      <p>{{ wf.nodes.length }} noeuds · {{ wf.edges.length }} liaisons · v{{ wf.version }}</p>
       <div class="panel-row"><strong>Status</strong><span>{{ getStatusLabel(wf.status) }}</span></div>
       <div class="panel-row"><strong>Mis à jour</strong><span>{{ wf.updatedAt | date:'d/M/yyyy HH:mm' }}</span></div>
       <div class="panel-row"><strong>Créé par</strong><span>{{ wf.createdBy }}</span></div>
@@ -25,7 +25,7 @@
     <div class="panel">
       <h4>Liaisons</h4>
       <div *ngIf="wf.edges.length === 0" class="no-data">Aucune liaison définie.</div>
-      <div *ngFor="let edge of wf.edges" class="edge-item">{{ edge.source }} â†’ {{ edge.target }}</div>
+      <div *ngFor="let edge of wf.edges" class="edge-item">{{ edge.source }} → {{ edge.target }}</div>
     </div>
     <div class="panel">
       <h4>Instructions</h4>

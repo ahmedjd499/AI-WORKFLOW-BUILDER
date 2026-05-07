@@ -60,7 +60,7 @@ export class WorkflowEditorComponent implements OnInit {
           return null;
         }
 
-        // Node width is 230px, handles are offset by Â±8px
+        // Node width is 230px, handles are offset by 8px
         const x1 = source.position.x + 230 + 8;  // Output handle (right side)
         const y1 = source.position.y + 42;        // Vertical center
         const x2 = target.position.x - 8;         // Input handle (left side)

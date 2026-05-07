@@ -11,22 +11,21 @@
 
       <label>
         Mot de passe
-        <input name="password" [(ngModel)]="credentials.password" required type="password"
-          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+        <input name="password" [(ngModel)]="credentials.password" required type="password" placeholder="password" />
       </label>
 
-      <button type="submit" [disabled]="loginForm.invalid || loading">
+      <button type=" submit" [disabled]="loginForm.invalid || loading">
         <span *ngIf="loading" class="spinner"></span>
-        <span>{{ loading ? 'Connexion en coursâ€¦' : 'Se connecter' }}</span>
+        <span>{{ loading ? 'Connexion en cours' : 'Se connecter' }}</span>
       </button>
 
       <div *ngIf="successMsg()" class="alert-success">
-        <span class="alert-icon">âœ“</span>
+        <span class="alert-icon">✅</span>
         <span>{{ successMsg() }}</span>
       </div>
 
       <div *ngIf="error()" class="alert-error" (click)="dismissError()">
-        <span class="alert-icon">âœ•</span>
+        <span class="alert-icon">❌</span>
         <span>{{ error() }}</span>
         <small class="alert-hint">Cliquer pour fermer</small>
       </div>

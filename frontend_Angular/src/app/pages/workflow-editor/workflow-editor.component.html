@@ -1,198 +1,166 @@
-﻿
-    <app-page-heading
-      eyebrow="Workflow Editor"
-      title="{{ workflowName() || 'Nouveau workflow' }}"
-      description="Ajoutez des agents, deplacez les noeuds et reliez-les comme dans la version React."
-    ></app-page-heading>
+﻿<app-page-heading eyebrow="Workflow Editor" title="{{ workflowName() || 'Nouveau workflow' }}"
+  description="Ajoutez des agents, deplacez les noeuds et reliez-les comme dans la version React."></app-page-heading>
 
-    <section class="editor-toolbar">
-      <button class="btn-secondary" (click)="goBack()">Retour</button>
-      <div class="toolbar-center">
-        <input
-          type="text"
-          class="workflow-name-input"
-          [value]="workflowName()"
-          (input)="workflowName.set(getEventValue($event))"
-          placeholder="Nom du workflow"
-        />
-        <span class="badge" *ngIf="workflowId !== 'new'">v{{ workflow()?.version || 1 }}</span>
-      </div>
-      <div class="toolbar-right">
-        <button class="btn-secondary mobile-panel-btn" type="button" (click)="showLeftPanel.set(!showLeftPanel())">â˜° Agents</button>
-        <button class="btn-secondary mobile-panel-btn" type="button" (click)="showRightPanel.set(!showRightPanel())" *ngIf="selectedNode()">âš™ Config</button>
-        <button class="btn-secondary" (click)="validateWorkflow()">Valider</button>
-        <button class="btn-primary" (click)="saveWorkflow()" [disabled]="saving()">
-          {{ saving() ? 'Sauvegarde...' : 'Save' }}
-        </button>
-        <button
-          class="btn-run"
-          *ngIf="workflowId && workflowId !== 'new'"
-          (click)="runWorkflow()"
-          [disabled]="nodes().length === 0 || saving() || runningWorkflow()"
-        >
-          {{ runningWorkflow() ? 'Run...' : 'Run' }}
-        </button>
-      </div>
-    </section>
+<section class="editor-toolbar">
+  <button class="btn-secondary" (click)="goBack()">Retour</button>
+  <div class="toolbar-center">
+    <input type="text" class="workflow-name-input" [value]="workflowName()"
+      (input)="workflowName.set(getEventValue($event))" placeholder="Nom du workflow" />
+    <span class="badge" *ngIf="workflowId !== 'new'">v{{ workflow()?.version || 1 }}</span>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn-secondary mobile-panel-btn" type="button" (click)="showLeftPanel.set(!showLeftPanel())">â˜°
+      Agents</button>
+    <button class="btn-secondary mobile-panel-btn" type="button" (click)="showRightPanel.set(!showRightPanel())"
+      *ngIf="selectedNode()">Config</button>
+    <button class="btn-secondary" (click)="validateWorkflow()">Valider</button>
+    <button class="btn-primary" (click)="saveWorkflow()" [disabled]="saving()">
+      {{ saving() ? 'Sauvegarde...' : 'Save' }}
+    </button>
+    <button class="btn-run" *ngIf="workflowId && workflowId !== 'new'" (click)="runWorkflow()"
+      [disabled]="nodes().length === 0 || saving() || runningWorkflow()">
+      {{ runningWorkflow() ? 'Run...' : 'Run' }}
+    </button>
+  </div>
+</section>
 
-    <section class="workspace">
-      <aside class="panel left-panel" [class.mobile-visible]="showLeftPanel()">
-        <h3>Agent Palette</h3>
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search agents..."
-          [value]="agentSearch()"
-          (input)="agentSearch.set(getEventValue($event))"
-        />
+<section class="workspace">
+  <aside class="panel left-panel" [class.mobile-visible]="showLeftPanel()">
+    <h3>Agent Palette</h3>
+    <input type="text" class="search-input" placeholder="Search agents..." [value]="agentSearch()"
+      (input)="agentSearch.set(getEventValue($event))" />
 
-        <div class="agent-list">
-          <button
-            *ngFor="let agent of filteredAgents()"
-            class="agent-item"
-            (click)="addAgentNode(agent)"
-          >
-            <strong>{{ agent.name }}</strong>
-            <small>{{ agent.family }} Â· v{{ agent.version }}</small>
-          </button>
-        </div>
-      </aside>
-
-      <main class="canvas-panel">
-        <div class="canvas-header">
-          <span>{{ nodes().length }} nodes</span>
-          <span>{{ edges().length }} links</span>
-          <span *ngIf="connectingFrom()">Lien: selectionnez une entree bleue...</span>
-          <span *ngIf="selectedEdgeId()">Fleche selectionnee: double-cliquez pour supprimer</span>
-        </div>
-
-        <div class="canvas" (click)="cancelConnection()">
-          <div class="canvas-inner">
-          <svg class="edge-layer">
-            <defs>
-              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"></path>
-              </marker>
-              <marker id="arrow-selected" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                <path d="M0,0 L0,6 L8,3 z" fill="#0ea5e9"></path>
-              </marker>
-            </defs>
-            <ng-container *ngFor="let edge of edgePaths(); trackBy: trackEdge">
-              <path
-                [attr.d]="edge.path"
-                class="edge-hit-path"
-                (click)="selectEdge(edge.id); $event.stopPropagation()"
-                (dblclick)="removeEdgeById(edge.id); $event.stopPropagation()"
-              ></path>
-              <path
-                [attr.d]="edge.path"
-                class="edge-path"
-                [class.selected]="selectedEdgeId() === edge.id"
-                [attr.stroke-dasharray]="'8 5'"
-                [attr.stroke]="selectedEdgeId() === edge.id ? '#0ea5e9' : '#3b82f6'"
-                [attr.stroke-width]="selectedEdgeId() === edge.id ? '2.5' : '2'"
-                fill="none"
-                [attr.marker-end]="selectedEdgeId() === edge.id ? 'url(#arrow-selected)' : 'url(#arrow)'"
-              ></path>
-            </ng-container>
-          </svg>
-
-          <svg class="temp-edge-layer" *ngIf="tempEdgePath()">
-            <path [attr.d]="tempEdgePath()" class="temp-edge-path" [attr.stroke-dasharray]="'6 5'" marker-end="url(#arrow)"></path>
-          </svg>
-
-          <div
-            *ngFor="let node of nodes(); trackBy: trackNode"
-            class="node"
-            [class.selected]="selectedNode()?.id === node.id"
-            [class.connecting]="connectingFrom() === node.id"
-            [style.left.px]="node.position.x"
-            [style.top.px]="node.position.y"
-            (click)="selectNode(node); $event.stopPropagation()"
-          >
-            <button type="button" class="handle input" (click)="completeConnection(node.id, $event)" (mouseup)="completeConnectionDrag(node.id, $event)" title="Relacher pour connecter"></button>
-            <div class="node-body" (mousedown)="startDrag(node.id, $event)">
-              <div class="node-title">{{ node.label }}</div>
-              <div class="node-subtitle">{{ getAgentLabel(node.agentId) }}</div>
-              <div class="node-meta">On error: {{ node.errorPolicy.toLowerCase() }}</div>
-            </div>
-            <button type="button" class="handle output" (click)="startConnection(node.id, $event)" (mousedown)="startConnectionDrag(node.id, $event)" title="Glisser pour connecter"></button>
-            <button type="button" class="remove-node" (click)="removeNode(node.id); $event.stopPropagation()">Ã—</button>
-          </div>
-          </div><!-- /canvas-inner -->
-        </div>
-      </main>
-
-      <aside class="panel right-panel" [class.mobile-visible]="showRightPanel()" *ngIf="selectedNode() as node">
-        <h3>Node Config</h3>
-
-        <label>
-          Label
-          <input type="text" [value]="node.label" (input)="setNodeLabel(node, $event)" />
-        </label>
-
-        <label>
-          Error policy
-          <select [ngModel]="node.errorPolicy" (ngModelChange)="setNodeErrorPolicy(node, $event)">
-            <option value="STOP">STOP</option>
-            <option value="CONTINUE">CONTINUE</option>
-          </select>
-        </label>
-
-        <label>
-          Max retries
-          <input type="number" [value]="node.maxRetries ?? 0" (input)="setNodeMaxRetries(node, $event)" />
-        </label>
-
-        <div class="hint">
-          Tip: cliquez sur la sortie verte d'un noeud puis l'entree bleue d'un autre pour creer une liaison.
-        </div>
-
-        <div class="manual-link" *ngIf="nodes().length > 1">
-          <label>
-            Lier ce noeud vers
-            <select [value]="manualLinkTargetId()" (change)="manualLinkTargetId.set(getEventValue($event))">
-              <option value="">Choisir la cible...</option>
-              <option *ngFor="let candidate of nodes()" [value]="candidate.id" [disabled]="candidate.id === node.id">
-                {{ candidate.label }}
-              </option>
-            </select>
-          </label>
-          <button type="button" class="btn-secondary" (click)="connectSelectedToTarget()" [disabled]="!manualLinkTargetId()">
-            Ajouter la liaison
-          </button>
-        </div>
-      </aside>
-
-      <aside class="panel right-panel" *ngIf="selectedEdge() as edge">
-        <h3>Edge Config</h3>
-        <label>
-          Source
-          <select [ngModel]="edge.source" (ngModelChange)="updateSelectedEdgeSource($event)">
-            <option *ngFor="let candidate of nodes()" [value]="candidate.id">{{ candidate.label }}</option>
-          </select>
-        </label>
-
-        <label>
-          Cible
-          <select [ngModel]="edge.target" (ngModelChange)="updateSelectedEdgeTarget($event)">
-            <option *ngFor="let candidate of nodes()" [value]="candidate.id">{{ candidate.label }}</option>
-          </select>
-        </label>
-
-        <div class="hint">Cliquez une fleche puis modifiez sa source ou sa cible.</div>
-        <button type="button" class="btn-secondary" (click)="removeEdgeById(edge.id)">Supprimer cette fleche</button>
-      </aside>
-    </section>
-
-    <div *ngIf="validationResult()" class="modal-overlay" (click)="validationResult.set(null)">
-      <div class="modal" (click)="$event.stopPropagation()">
-        <h3>Validation</h3>
-        <p *ngIf="validationResult()?.valid" class="success">Workflow valide</p>
-        <ul *ngIf="!validationResult()?.valid" class="errors">
-          <li *ngFor="let error of validationResult()?.errors">{{ error }}</li>
-        </ul>
-        <button class="btn-primary" (click)="validationResult.set(null)">Fermer</button>
-      </div>
+    <div class="agent-list">
+      <button *ngFor="let agent of filteredAgents()" class="agent-item" (click)="addAgentNode(agent)">
+        <strong>{{ agent.name }}</strong>
+        <small>{{ agent.family }} Â· v{{ agent.version }}</small>
+      </button>
     </div>
-  
+  </aside>
+
+  <main class="canvas-panel">
+    <div class="canvas-header">
+      <span>{{ nodes().length }} nodes</span>
+      <span>{{ edges().length }} links</span>
+      <span *ngIf="connectingFrom()">Lien: selectionnez une entree bleue...</span>
+      <span *ngIf="selectedEdgeId()">Fleche selectionnee: double-cliquez pour supprimer</span>
+    </div>
+
+    <div class="canvas" (click)="cancelConnection()">
+      <div class="canvas-inner">
+        <svg class="edge-layer">
+          <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"></path>
+            </marker>
+            <marker id="arrow-selected" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#0ea5e9"></path>
+            </marker>
+          </defs>
+          <ng-container *ngFor="let edge of edgePaths(); trackBy: trackEdge">
+            <path [attr.d]="edge.path" class="edge-hit-path" (click)="selectEdge(edge.id); $event.stopPropagation()"
+              (dblclick)="removeEdgeById(edge.id); $event.stopPropagation()"></path>
+            <path [attr.d]="edge.path" class="edge-path" [class.selected]="selectedEdgeId() === edge.id"
+              [attr.stroke-dasharray]="'8 5'" [attr.stroke]="selectedEdgeId() === edge.id ? '#0ea5e9' : '#3b82f6'"
+              [attr.stroke-width]="selectedEdgeId() === edge.id ? '2.5' : '2'" fill="none"
+              [attr.marker-end]="selectedEdgeId() === edge.id ? 'url(#arrow-selected)' : 'url(#arrow)'"></path>
+          </ng-container>
+        </svg>
+
+        <svg class="temp-edge-layer" *ngIf="tempEdgePath()">
+          <path [attr.d]="tempEdgePath()" class="temp-edge-path" [attr.stroke-dasharray]="'6 5'"
+            marker-end="url(#arrow)"></path>
+        </svg>
+
+        <div *ngFor="let node of nodes(); trackBy: trackNode" class="node"
+          [class.selected]="selectedNode()?.id === node.id" [class.connecting]="connectingFrom() === node.id"
+          [style.left.px]="node.position.x" [style.top.px]="node.position.y"
+          (click)="selectNode(node); $event.stopPropagation()">
+          <button type="button" class="handle input" (click)="completeConnection(node.id, $event)"
+            (mouseup)="completeConnectionDrag(node.id, $event)" title="Relacher pour connecter"></button>
+          <div class="node-body" (mousedown)="startDrag(node.id, $event)">
+            <div class="node-title">{{ node.label }}</div>
+            <div class="node-subtitle">{{ getAgentLabel(node.agentId) }}</div>
+            <div class="node-meta">On error: {{ node.errorPolicy.toLowerCase() }}</div>
+          </div>
+          <button type="button" class="handle output" (click)="startConnection(node.id, $event)"
+            (mousedown)="startConnectionDrag(node.id, $event)" title="Glisser pour connecter"></button>
+          <button type="button" class="remove-node" (click)="removeNode(node.id); $event.stopPropagation()">Ã—</button>
+        </div>
+      </div><!-- /canvas-inner -->
+    </div>
+  </main>
+
+  <aside class="panel right-panel" [class.mobile-visible]="showRightPanel()" *ngIf="selectedNode() as node">
+    <h3>Node Config</h3>
+
+    <label>
+      Label
+      <input type="text" [value]="node.label" (input)="setNodeLabel(node, $event)" />
+    </label>
+
+    <label>
+      Error policy
+      <select [ngModel]="node.errorPolicy" (ngModelChange)="setNodeErrorPolicy(node, $event)">
+        <option value="STOP">STOP</option>
+        <option value="CONTINUE">CONTINUE</option>
+      </select>
+    </label>
+
+    <label>
+      Max retries
+      <input type="number" [value]="node.maxRetries ?? 0" (input)="setNodeMaxRetries(node, $event)" />
+    </label>
+
+    <div class="hint">
+      Tip: cliquez sur la sortie verte d'un noeud puis l'entree bleue d'un autre pour creer une liaison.
+    </div>
+
+    <div class="manual-link" *ngIf="nodes().length > 1">
+      <label>
+        Lier ce noeud vers
+        <select [value]="manualLinkTargetId()" (change)="manualLinkTargetId.set(getEventValue($event))">
+          <option value="">Choisir la cible...</option>
+          <option *ngFor="let candidate of nodes()" [value]="candidate.id" [disabled]="candidate.id === node.id">
+            {{ candidate.label }}
+          </option>
+        </select>
+      </label>
+      <button type="button" class="btn-secondary" (click)="connectSelectedToTarget()"
+        [disabled]="!manualLinkTargetId()">
+        Ajouter la liaison
+      </button>
+    </div>
+  </aside>
+
+  <aside class="panel right-panel" *ngIf="selectedEdge() as edge">
+    <h3>Edge Config</h3>
+    <label>
+      Source
+      <select [ngModel]="edge.source" (ngModelChange)="updateSelectedEdgeSource($event)">
+        <option *ngFor="let candidate of nodes()" [value]="candidate.id">{{ candidate.label }}</option>
+      </select>
+    </label>
+
+    <label>
+      Cible
+      <select [ngModel]="edge.target" (ngModelChange)="updateSelectedEdgeTarget($event)">
+        <option *ngFor="let candidate of nodes()" [value]="candidate.id">{{ candidate.label }}</option>
+      </select>
+    </label>
+
+    <div class="hint">Cliquez une fleche puis modifiez sa source ou sa cible.</div>
+    <button type="button" class="btn-secondary" (click)="removeEdgeById(edge.id)">Supprimer cette fleche</button>
+  </aside>
+</section>
+
+<div *ngIf="validationResult()" class="modal-overlay" (click)="validationResult.set(null)">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>Validation</h3>
+    <p *ngIf="validationResult()?.valid" class="success">Workflow valide</p>
+    <ul *ngIf="!validationResult()?.valid" class="errors">
+      <li *ngFor="let error of validationResult()?.errors">{{ error }}</li>
+    </ul>
+    <button class="btn-primary" (click)="validationResult.set(null)">Fermer</button>
+  </div>
+</div>
