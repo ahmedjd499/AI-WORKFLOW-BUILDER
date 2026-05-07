@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, computed, inject, signal, OnDestroy, ViewChild, ElementRef, effect } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, OnDestroy, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -261,7 +261,7 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
         const durationMs = Number(data['durationMs'] || 0);
         this.running.set(false);
         this.currentRun.update((run) => (run ? { ...run, status: 'SUCCESS', durationMs } : run));
-        this.addLog(`Exécution terminée avec succÃ¨s (${durationMs}ms)`, 'success');
+        this.addLog(`Exécution terminée avec succés (${durationMs}ms)`, 'success');
         this.syncRunDetails(runId);
         this.eventSource?.close();
         this.eventSource = null;
