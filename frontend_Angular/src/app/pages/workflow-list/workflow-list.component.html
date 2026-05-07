@@ -65,13 +65,10 @@
       </div>
     </div>
 
-    <div class="edge-list" *ngIf="workflow.edges.length > 0">
-      <span *ngFor="let edge of workflow.edges">{{ edge.source }} → {{ edge.target }}</span>
-    </div>
+
 
     <div class="card-meta">
       <span>Cree le {{ workflow.createdAt | date:'d/M/yyyy' }}</span>
-      <span>{{ workflow.nodes.length > 0 ? 'Pret a executer' : 'A completer' }}</span>
     </div>
 
     <div class="card-actions">

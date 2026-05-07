@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -10,27 +10,29 @@ export const routes: Routes = [
   },
   {
     path: 'workflows',
-    title: 'Workflows',
     canActivate: [authGuard],
-    loadComponent: () => import('./pages/workflow-list/workflow-list.component').then((m) => m.WorkflowListComponent)
-  },
-  {
-    path: 'workflows/:id/builder',
-    title: 'Workflow Pro',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/workflow-builder/workflow-builder.component').then((m) => m.WorkflowBuilderComponent)
-  },
-  {
-    path: 'workflows/:id/edit',
-    title: 'Workflow Editor',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/workflow-editor/workflow-editor.component').then((m) => m.WorkflowEditorComponent)
-  },
-  {
-    path: 'workflows/:id/run',
-    title: 'Workflow Playground',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/workflow-playground/workflow-playground.component').then((m) => m.WorkflowPlaygroundComponent)
+    children: [
+      {
+        path: '',
+        title: 'Workflows',
+        loadComponent: () => import('./pages/workflow-list/workflow-list.component').then((m) => m.WorkflowListComponent)
+      },
+      {
+        path: ':id/builder',
+        title: 'Workflow Pro',
+        loadComponent: () => import('./pages/workflow-builder/workflow-builder.component').then((m) => m.WorkflowBuilderComponent)
+      },
+      {
+        path: ':id/edit',
+        title: 'Workflow Editor',
+        loadComponent: () => import('./pages/workflow-editor/workflow-editor.component').then((m) => m.WorkflowEditorComponent)
+      },
+      {
+        path: ':id/run',
+        title: 'Workflow Playground',
+        loadComponent: () => import('./pages/workflow-playground/workflow-playground.component').then((m) => m.WorkflowPlaygroundComponent)
+      }
+    ]
   },
   {
     path: 'agents',
