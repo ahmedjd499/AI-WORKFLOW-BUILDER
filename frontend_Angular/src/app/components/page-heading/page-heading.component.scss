@@ -13,6 +13,12 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.78rem;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+
 }
 
 h2 {

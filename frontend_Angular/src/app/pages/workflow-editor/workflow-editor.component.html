@@ -1,5 +1,4 @@
-﻿<app-page-heading eyebrow="Workflow Editor" title="{{ workflowName() || 'Nouveau workflow' }}"
-  description="Ajoutez des agents, deplacez les noeuds et reliez-les comme dans la version React."></app-page-heading>
+﻿<app-page-heading eyebrow="Workflow Editor"></app-page-heading>
 
 <section class="editor-toolbar">
   <button class="btn-secondary" (click)="goBack()">Retour</button>
@@ -85,7 +84,7 @@
           </div>
           <button type="button" class="handle output" (click)="startConnection(node.id, $event)"
             (mousedown)="startConnectionDrag(node.id, $event)" title="Glisser pour connecter"></button>
-          <button type="button" class="remove-node" (click)="removeNode(node.id); $event.stopPropagation()">Ã—</button>
+          <button type="button" class="remove-node" (click)="removeNode(node.id); $event.stopPropagation()">❌</button>
         </div>
       </div><!-- /canvas-inner -->
     </div>

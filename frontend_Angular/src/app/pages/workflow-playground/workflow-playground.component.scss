@@ -1,4 +1,7 @@
-:host { display: block; height: 100%; }
+:host {
+  display: block;
+  height: 100%;
+}
 
 .playground-toolbar {
   display: flex;
@@ -23,14 +26,37 @@
   font-weight: 700;
 }
 
-.status-pending { background: rgba(156, 163, 175, 0.18); color: #d1d5db; }
-.status-running { background: rgba(59, 130, 246, 0.18); color: #93c5fd; animation: pulse 1s infinite; }
-.status-success { background: rgba(22, 163, 74, 0.18); color: #86efac; }
-.status-failed { background: rgba(239, 68, 68, 0.18); color: #fecaca; }
+.status-pending {
+  background: rgba(156, 163, 175, 0.18);
+  color: #d1d5db;
+}
+
+.status-running {
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  animation: pulse 1s infinite;
+}
+
+.status-success {
+  background: rgba(22, 163, 74, 0.18);
+  color: #86efac;
+}
+
+.status-failed {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+}
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .duration {
@@ -74,7 +100,9 @@ button {
 }
 
 @keyframes spin-anim {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spin-icon {
@@ -102,7 +130,7 @@ button:disabled {
 
 .graph-area {
   position: relative;
-  background: linear-gradient(135deg, rgba(9,20,35,0.9) 0%, rgba(15,23,42,0.8) 100%);
+  background: linear-gradient(135deg, rgba(9, 20, 35, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%);
   border-right: 1px solid rgba(186, 230, 253, 0.12);
   overflow: hidden;
 }
@@ -128,7 +156,7 @@ button:disabled {
 .canvas-grid {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(186, 230, 253, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(186, 230, 253, 0.05) 1px, transparent 1px);
   background-size: 30px 30px;
@@ -253,7 +281,8 @@ button:disabled {
   border-bottom: 1px solid rgba(186, 230, 253, 0.12);
 }
 
-.panel-section h3, .panel-section h4 {
+.panel-section h3,
+.panel-section h4 {
   margin: 0 0 0.75rem 0;
   color: #f8fafc;
   font-size: 0.95rem;
@@ -436,17 +465,33 @@ button:disabled {
   font-weight: 600;
 }
 
-.step-status, .step-duration {
+.step-status,
+.step-duration {
   font-size: 0.7rem;
   color: #9fb0c2;
 }
 
-.step-pending { border-color: rgba(156, 163, 175, 0.3); }
-.step-running { border-color: rgba(59, 130, 246, 0.5); background: rgba(59, 130, 246, 0.1); }
-.step-success { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.1); }
-.step-failed { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
+.step-pending {
+  border-color: rgba(156, 163, 175, 0.3);
+}
 
-.empty-list, .empty-logs {
+.step-running {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.step-success {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.step-failed {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.empty-list,
+.empty-logs {
   padding: 0.75rem;
   text-align: center;
   color: #9fb0c2;
@@ -506,7 +551,9 @@ button:disabled {
   background: rgba(30, 58, 138, 0.2);
 }
 
-.log-line:first-child { padding-top: 0; }
+.log-line:first-child {
+  padding-top: 0;
+}
 
 .log-line:not(:last-child) {
   margin-bottom: 0.15rem;

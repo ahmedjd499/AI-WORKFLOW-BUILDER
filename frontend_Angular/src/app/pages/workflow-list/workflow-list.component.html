@@ -1,220 +1,210 @@
-﻿
-    <app-page-heading
-      eyebrow="Workflow Studio"
-      title="Orchestration visuelle type n8n"
-      description=""
-    ></app-page-heading>
+﻿<app-page-heading eyebrow="Workflow Studio"></app-page-heading>
 
-    <section class="studio-hero">
+<section class="studio-hero">
+  <div>
+    <span class="kicker">Live data</span>
+    <h2>{{ workflows().length }} workflows, {{ agents().length }} agents actifs, {{ data.recentRuns().length }}
+      executions</h2>
+
+  </div>
+  <button class="btn-primary" (click)="openCreateForm()">Nouveau workflow</button>
+</section>
+
+<section class="toolbar">
+  <div class="filters">
+    <input type="text" placeholder="Rechercher un workflow..." [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)" />
+    <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
+      <option value="">Tous les statuts</option>
+      <option value="DRAFT">Brouillon</option>
+      <option value="RUNNING">En cours</option>
+      <option value="SUCCESS">Reussi</option>
+      <option value="FAILED">Echoue</option>
+    </select>
+  </div>
+  <button (click)="refreshAll()" [disabled]="data.loading()">{{ data.loading() ? 'Synchronisation...' : 'Rafraichir'
+    }}</button>
+</section>
+
+<section *ngIf="data.loading() && workflows().length === 0" class="status-message shimmer">Chargement du studio...
+</section>
+<section *ngIf="error() || data.error()" class="status-message error">{{ error() || data.error() }}</section>
+
+<section *ngIf="filteredWorkflows().length > 0" class="workflows-grid">
+  <article *ngFor="let workflow of filteredWorkflows(); trackBy: trackWorkflow" class="workflow-card">
+    <div class="card-header">
       <div>
-        <span class="kicker">Live data</span>
-        <h2>{{ workflows().length }} workflows, {{ agents().length }} agents actifs, {{ data.recentRuns().length }} executions</h2>
-        <p>Les donnees principales sont prechargees des l'entree dans l'interface pour eviter les pages vides et les rechargements inutiles.</p>
+        <h3>{{ workflow.name }}</h3>
+        <p>{{ workflow.nodes.length }} noeud(s) · {{ workflow.edges.length }} liaison(s) · v{{ workflow.version }}</p>
       </div>
-      <button class="btn-primary" (click)="openCreateForm()">Nouveau workflow connecte</button>
-    </section>
+      <span class="status" [class]="'status status-' + workflow.status.toLowerCase()">
+        {{ getStatusLabel(workflow.status) }}
+      </span>
+    </div>
 
-    <section class="toolbar">
-      <div class="filters">
-        <input
-          type="text"
-          placeholder="Rechercher un workflow..."
-          [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event)"
-        />
-        <select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
-          <option value="">Tous les statuts</option>
-          <option value="DRAFT">Brouillon</option>
-          <option value="RUNNING">En cours</option>
-          <option value="SUCCESS">Reussi</option>
-          <option value="FAILED">Echoue</option>
+    <div class="flow-preview" [style.--node-count]="workflow.nodes.length || 1">
+      <div *ngFor="let node of workflow.nodes; let index = index; trackBy: trackNode" class="flow-node">
+        <span>{{ index + 1 }}</span>
+        <strong>{{ node.label }}</strong>
+        <small>{{ node.errorPolicy }} · retry {{ node.maxRetries ?? 0 }}</small>
+      </div>
+      <div *ngIf="workflow.nodes.length === 0" class="flow-node empty">
+        <span>0</span>
+        <strong>Aucun noeud</strong>
+        <small>Ajoutez des agents</small>
+      </div>
+    </div>
+
+    <div class="edge-list" *ngIf="workflow.edges.length > 0">
+      <span *ngFor="let edge of workflow.edges">{{ edge.source }} → {{ edge.target }}</span>
+    </div>
+
+    <div class="card-meta">
+      <span>Mis a jour {{ workflow.updatedAt | date:'d/M/yyyy HH:mm' }}</span>
+      <span>{{ workflow.createdAt | date:'d/M/yyyy' }}</span>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn-edit" (click)="navigateToEditor(workflow)">📝 Edit</button>
+      <button class="btn-run" (click)="navigateToPlayground(workflow)" [disabled]="workflow.nodes.length === 0">▶
+        Run</button>
+      <button class="danger" (click)="deleteWorkflow(workflow.id)">🗑️ Delete</button>
+    </div>
+  </article>
+</section>
+
+<section *ngIf="!data.loading() && filteredWorkflows().length === 0" class="empty-state">
+  <h3>Aucun workflow trouve</h3>
+  <p>Creez un pipeline connecte: input → agent 1 → agent 2 → resultat final.</p>
+  <button class="btn-primary" (click)="openCreateForm()">Creer maintenant</button>
+</section>
+
+<div *ngIf="showCreateForm()" class="modal-overlay" (click)="closeCreateForm()">
+  <div class="modal-content builder-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <span class="kicker">Builder</span>
+        <h3>Nouveau workflow connecte</h3>
+        <p>Chaque noeud transmet son output au noeud suivant, comme un mini n8n.</p>
+      </div>
+      <button type="button" class="icon-button" (click)="closeCreateForm()">x</button>
+    </div>
+
+    <form (ngSubmit)="createWorkflow()">
+      <label>
+        Nom du workflow
+        <input name="name" [ngModel]="newWorkflowName()" (ngModelChange)="newWorkflowName.set($event)" required
+          placeholder="Ex: Analyse client complete" />
+      </label>
+
+      <label>
+        Template
+        <select name="template" [ngModel]="selectedTemplate()" (ngModelChange)="changeTemplate($event)">
+          <option value="translate-summary">Translate → Summarize</option>
+          <option value="weather">Geocode → Forecast</option>
+          <option value="summarize">Summarize text</option>
+          <option value="sentiment">Sentiment analysis</option>
+          <option value="single-agent">Single selected agent</option>
+          <option value="custom-chain">Custom chain multi-agents</option>
         </select>
-      </div>
-      <button (click)="refreshAll()" [disabled]="data.loading()">{{ data.loading() ? 'Synchronisation...' : 'Rafraichir' }}</button>
-    </section>
+      </label>
 
-    <section *ngIf="data.loading() && workflows().length === 0" class="status-message shimmer">Chargement du studio...</section>
-    <section *ngIf="error() || data.error()" class="status-message error">{{ error() || data.error() }}</section>
+      <label *ngIf="selectedTemplate() === 'single-agent'">
+        Agent
+        <select name="agentId" [ngModel]="selectedAgentId()" (ngModelChange)="selectedAgentId.set($event)">
+          <option *ngFor="let agent of agents(); trackBy: trackAgent" [value]="agent.id">{{ agent.name }} · {{
+            agent.family }}</option>
+        </select>
+      </label>
 
-    <section *ngIf="filteredWorkflows().length > 0" class="workflows-grid">
-      <article *ngFor="let workflow of filteredWorkflows(); trackBy: trackWorkflow" class="workflow-card">
-        <div class="card-header">
-          <div>
-            <h3>{{ workflow.name }}</h3>
-            <p>{{ workflow.nodes.length }} noeud(s) · {{ workflow.edges.length }} liaison(s) · v{{ workflow.version }}</p>
-          </div>
-          <span class="status" [class]="'status status-' + workflow.status.toLowerCase()">
-            {{ getStatusLabel(workflow.status) }}
-          </span>
+      <section *ngIf="selectedTemplate() === 'custom-chain'" class="agent-picker">
+        <div class="picker-header">
+          <strong>Choisir l'ordre des agents</strong>
+          <button type="button" (click)="clearChain()">Vider</button>
+        </div>
+        <div class="agent-grid">
+          <button type="button" *ngFor="let agent of agents(); trackBy: trackAgent" (click)="addAgentToChain(agent)">
+            <strong>{{ agent.name }}</strong>
+            <small>{{ agent.family }} · {{ agent.version }}</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="execution-plan">
+        <div class="plan-title">
+          <span class="kicker">Execution plan</span>
+          <strong>{{ templatePreview().length }} noeud(s), {{ previewEdges().length }} liaison(s)</strong>
         </div>
 
-        <div class="flow-preview" [style.--node-count]="workflow.nodes.length || 1">
-          <div *ngFor="let node of workflow.nodes; let index = index; trackBy: trackNode" class="flow-node">
+        <div class="builder-flow" [style.--node-count]="templatePreview().length || 1">
+          <div *ngFor="let item of templatePreview(); let index = index" class="flow-node selected">
             <span>{{ index + 1 }}</span>
-            <strong>{{ node.label }}</strong>
-            <small>{{ node.errorPolicy }} · retry {{ node.maxRetries ?? 0 }}</small>
+            <strong>{{ item }}</strong>
+            <small>{{ index === 0 ? 'Input prompt' : 'Output precedent' }}</small>
           </div>
-          <div *ngIf="workflow.nodes.length === 0" class="flow-node empty">
-            <span>0</span>
-            <strong>Aucun noeud</strong>
-            <small>Ajoutez des agents</small>
+          <div *ngIf="templatePreview().length === 0" class="flow-node empty">
+            <span>?</span>
+            <strong>Aucun agent</strong>
+            <small>Selectionnez au moins un agent</small>
           </div>
         </div>
 
-        <div class="edge-list" *ngIf="workflow.edges.length > 0">
-          <span *ngFor="let edge of workflow.edges">{{ edge.source }} → {{ edge.target }}</span>
+        <div class="mapping-box" *ngIf="previewEdges().length > 0">
+          <span *ngFor="let edge of previewEdges()">{{ edge.source }}.output → {{ edge.target }}.input</span>
         </div>
+      </section>
 
-        <div class="card-meta">
-          <span>Mis a jour {{ workflow.updatedAt | date:'d/M/yyyy HH:mm' }}</span>
-          <span>{{ workflow.createdAt | date:'d/M/yyyy' }}</span>
+      <div class="form-actions">
+        <button type="button" (click)="closeCreateForm()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="creating() || !newWorkflowName().trim()">
+          {{ creating() ? 'Creation...' : 'Creer le workflow' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="runWorkflowTarget() as target" class="modal-overlay" (click)="closeRunForm()">
+  <div class="modal-content run-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <span class="kicker">Execution</span>
+        <h3>{{ target.name }}</h3>
+        <p>{{ target.nodes.length }} agents connectes avant lancement.</p>
+      </div>
+      <button type="button" class="icon-button" (click)="closeRunForm()">x</button>
+    </div>
+
+    <div class="execution-plan compact">
+      <div class="builder-flow" [style.--node-count]="target.nodes.length || 1">
+        <div *ngFor="let node of target.nodes; let index = index; trackBy: trackNode" class="flow-node selected">
+          <span>{{ index + 1 }}</span>
+          <strong>{{ node.label }}</strong>
+          <small>{{ index === 0 ? 'Recoit le prompt' : 'Recoit le resultat precedent' }}</small>
         </div>
-
-        <div class="card-actions">
-          <button class="btn-edit" (click)="navigateToEditor(workflow)">📝 Edit</button>
-          <button class="btn-run" (click)="navigateToPlayground(workflow)" [disabled]="workflow.nodes.length === 0">▶ Run</button>
-          <button class="danger" (click)="deleteWorkflow(workflow.id)">🗑️ Delete</button>
-        </div>
-      </article>
-    </section>
-
-    <section *ngIf="!data.loading() && filteredWorkflows().length === 0" class="empty-state">
-      <h3>Aucun workflow trouve</h3>
-      <p>Creez un pipeline connecte: input → agent 1 → agent 2 → resultat final.</p>
-      <button class="btn-primary" (click)="openCreateForm()">Creer maintenant</button>
-    </section>
-
-    <div *ngIf="showCreateForm()" class="modal-overlay" (click)="closeCreateForm()">
-      <div class="modal-content builder-modal" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <div>
-            <span class="kicker">Builder</span>
-            <h3>Nouveau workflow connecte</h3>
-            <p>Chaque noeud transmet son output au noeud suivant, comme un mini n8n.</p>
-          </div>
-          <button type="button" class="icon-button" (click)="closeCreateForm()">x</button>
-        </div>
-
-        <form (ngSubmit)="createWorkflow()">
-          <label>
-            Nom du workflow
-            <input name="name" [ngModel]="newWorkflowName()" (ngModelChange)="newWorkflowName.set($event)" required placeholder="Ex: Analyse client complete" />
-          </label>
-
-          <label>
-            Template
-            <select name="template" [ngModel]="selectedTemplate()" (ngModelChange)="changeTemplate($event)">
-              <option value="translate-summary">Translate → Summarize</option>
-              <option value="weather">Geocode → Forecast</option>
-              <option value="summarize">Summarize text</option>
-              <option value="sentiment">Sentiment analysis</option>
-              <option value="single-agent">Single selected agent</option>
-              <option value="custom-chain">Custom chain multi-agents</option>
-            </select>
-          </label>
-
-          <label *ngIf="selectedTemplate() === 'single-agent'">
-            Agent
-            <select name="agentId" [ngModel]="selectedAgentId()" (ngModelChange)="selectedAgentId.set($event)">
-              <option *ngFor="let agent of agents(); trackBy: trackAgent" [value]="agent.id">{{ agent.name }} · {{ agent.family }}</option>
-            </select>
-          </label>
-
-          <section *ngIf="selectedTemplate() === 'custom-chain'" class="agent-picker">
-            <div class="picker-header">
-              <strong>Choisir l'ordre des agents</strong>
-              <button type="button" (click)="clearChain()">Vider</button>
-            </div>
-            <div class="agent-grid">
-              <button type="button" *ngFor="let agent of agents(); trackBy: trackAgent" (click)="addAgentToChain(agent)">
-                <strong>{{ agent.name }}</strong>
-                <small>{{ agent.family }} · {{ agent.version }}</small>
-              </button>
-            </div>
-          </section>
-
-          <section class="execution-plan">
-            <div class="plan-title">
-              <span class="kicker">Execution plan</span>
-              <strong>{{ templatePreview().length }} noeud(s), {{ previewEdges().length }} liaison(s)</strong>
-            </div>
-
-            <div class="builder-flow" [style.--node-count]="templatePreview().length || 1">
-              <div *ngFor="let item of templatePreview(); let index = index" class="flow-node selected">
-                <span>{{ index + 1 }}</span>
-                <strong>{{ item }}</strong>
-                <small>{{ index === 0 ? 'Input prompt' : 'Output precedent' }}</small>
-              </div>
-              <div *ngIf="templatePreview().length === 0" class="flow-node empty">
-                <span>?</span>
-                <strong>Aucun agent</strong>
-                <small>Selectionnez au moins un agent</small>
-              </div>
-            </div>
-
-            <div class="mapping-box" *ngIf="previewEdges().length > 0">
-              <span *ngFor="let edge of previewEdges()">{{ edge.source }}.output → {{ edge.target }}.input</span>
-            </div>
-          </section>
-
-          <div class="form-actions">
-            <button type="button" (click)="closeCreateForm()">Annuler</button>
-            <button type="submit" class="btn-primary" [disabled]="creating() || !newWorkflowName().trim()">
-              {{ creating() ? 'Creation...' : 'Creer le workflow' }}
-            </button>
-          </div>
-        </form>
       </div>
     </div>
 
-    <div *ngIf="runWorkflowTarget() as target" class="modal-overlay" (click)="closeRunForm()">
-      <div class="modal-content run-modal" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <div>
-            <span class="kicker">Execution</span>
-            <h3>{{ target.name }}</h3>
-            <p>{{ target.nodes.length }} agents connectes avant lancement.</p>
-          </div>
-          <button type="button" class="icon-button" (click)="closeRunForm()">x</button>
-        </div>
+    <form (ngSubmit)="submitRun()">
+      <label>
+        Input du workflow
+        <textarea name="runPrompt" [ngModel]="runPrompt()" (ngModelChange)="runPrompt.set($event)" required rows="7"
+          placeholder="Ville, texte a resumer, ou contenu a analyser..."></textarea>
+      </label>
 
-        <div class="execution-plan compact">
-          <div class="builder-flow" [style.--node-count]="target.nodes.length || 1">
-            <div *ngFor="let node of target.nodes; let index = index; trackBy: trackNode" class="flow-node selected">
-              <span>{{ index + 1 }}</span>
-              <strong>{{ node.label }}</strong>
-              <small>{{ index === 0 ? 'Recoit le prompt' : 'Recoit le resultat precedent' }}</small>
-            </div>
-          </div>
-        </div>
-
-        <form (ngSubmit)="submitRun()">
-          <label>
-            Input du workflow
-            <textarea
-              name="runPrompt"
-              [ngModel]="runPrompt()"
-              (ngModelChange)="runPrompt.set($event)"
-              required
-              rows="7"
-              placeholder="Ville, texte a resumer, ou contenu a analyser..."
-            ></textarea>
-          </label>
-
-          <div class="template-preview">
-            <strong>Exemples rapides:</strong>
-            <button type="button" *ngFor="let example of promptExamples()" (click)="runPrompt.set(example)">
-              {{ example }}
-            </button>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" (click)="closeRunForm()">Annuler</button>
-            <button type="submit" class="btn-primary" [disabled]="running() || !runPrompt().trim()">
-              {{ running() ? 'Lancement...' : 'Lancer et voir le resultat' }}
-            </button>
-          </div>
-        </form>
+      <div class="template-preview">
+        <strong>Exemples rapides:</strong>
+        <button type="button" *ngFor="let example of promptExamples()" (click)="runPrompt.set(example)">
+          {{ example }}
+        </button>
       </div>
-    </div>
-  
+
+      <div class="form-actions">
+        <button type="button" (click)="closeRunForm()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="running() || !runPrompt().trim()">
+          {{ running() ? 'Lancement...' : 'Lancer et voir le resultat' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
