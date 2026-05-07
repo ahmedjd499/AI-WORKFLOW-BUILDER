@@ -1,0 +1,95 @@
+﻿
+    .studio-hero, .toolbar, .workflow-card, .empty-state, .status-message, .modal-content {
+      border: 1px solid rgba(186, 230, 253, 0.12);
+      background: rgba(9, 20, 35, 0.78);
+      box-shadow: 0 24px 70px rgba(2, 6, 23, 0.18);
+      backdrop-filter: blur(16px);
+    }
+
+    .studio-hero, .toolbar, .card-header, .card-meta, .card-actions, .form-actions, .modal-header, .picker-header, .plan-title {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .studio-hero, .toolbar, .workflow-card, .empty-state, .status-message { border-radius: 1.25rem; padding: 1.2rem; }
+    .studio-hero h2, h3, p { margin: 0; }
+    .studio-hero h2, h3 { color: #f8fafc; }
+    .studio-hero p, .card-header p, .card-meta, .empty-state p, .modal-header p, .flow-node small { color: #9fb0c2; }
+    .kicker { color: #8fd8ce; text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 900; }
+
+    .filters { display: flex; gap: 0.75rem; flex: 1; }
+    input, select, textarea { width: 100%; min-height: 44px; padding: 0.78rem; border-radius: 0.85rem; background: rgba(186, 230, 253, 0.08); border: 1px solid rgba(186, 230, 253, 0.16); color: #e5eef8; }
+    textarea { resize: vertical; line-height: 1.55; }
+    option { color: #0f172a; }
+
+    .workflows-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1rem; }
+    .workflow-card { display: grid; gap: 1rem; transition: transform 0.22s ease, border-color 0.22s ease; }
+    .workflow-card:hover { transform: translateY(-3px); border-color: rgba(45, 212, 191, 0.32); }
+    .card-header h3 { font-size: 1.05rem; }
+
+    .flow-preview, .builder-flow { --node-count: 1; position: relative; display: grid; grid-template-columns: repeat(var(--node-count), minmax(130px, 1fr)); gap: 0.85rem; overflow-x: auto; padding: 0.2rem 0; }
+    .flow-preview::before, .builder-flow::before { content: ''; position: absolute; left: 1rem; right: 1rem; top: 34px; height: 2px; background: linear-gradient(90deg, #2dd4bf, #facc15); opacity: 0.5; }
+    .flow-node { position: relative; z-index: 1; display: grid; gap: 0.25rem; min-width: 130px; padding: 0.8rem; border-radius: 1rem; background: rgba(2, 6, 23, 0.72); border: 1px solid rgba(186, 230, 253, 0.12); }
+    .flow-node span { width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 0.75rem; background: linear-gradient(135deg, #2dd4bf, #facc15); color: #07111f; font-weight: 900; }
+    .flow-node strong { color: #f8fafc; font-size: 0.92rem; }
+    .flow-node.selected { background: rgba(20, 184, 166, 0.1); border-color: rgba(45, 212, 191, 0.26); }
+    .flow-node.empty { opacity: 0.72; }
+
+    .edge-list, .mapping-box, .template-preview { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; border-radius: 0.9rem; background: rgba(186, 230, 253, 0.07); }
+    .edge-list span, .mapping-box span, .template-preview button { padding: 0.35rem 0.65rem; border-radius: 999px; background: rgba(59, 130, 246, 0.14); color: #bfdbfe; font-size: 0.82rem; }
+
+    .status { padding: 0.38rem 0.74rem; border-radius: 999px; font-size: 0.75rem; font-weight: 900; white-space: nowrap; }
+    .status-draft { color: #d1d5db; background: rgba(156, 163, 175, 0.18); }
+    .status-running { color: #93c5fd; background: rgba(59, 130, 246, 0.18); }
+    .status-success { color: #86efac; background: rgba(22, 163, 74, 0.18); }
+    .status-failed { color: #fecaca; background: rgba(239, 68, 68, 0.18); }
+
+    button { border: none; border-radius: 0.8rem; padding: 0.68rem 0.95rem; background: rgba(59, 130, 246, 0.18); color: #bfdbfe; cursor: pointer; font-weight: 800; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: linear-gradient(135deg, #2dd4bf, #facc15); color: #07111f; }
+    .btn-edit { background: rgba(59, 130, 246, 0.18); color: #bfdbfe; }
+    .btn-edit:hover { background: rgba(59, 130, 246, 0.3); }
+    .btn-run { background: rgba(34, 197, 94, 0.18); color: #86efac; }
+    .btn-run:hover { background: rgba(34, 197, 94, 0.3); }
+    .danger { background: rgba(239, 68, 68, 0.18); color: #fecaca; }
+    .danger:hover { background: rgba(239, 68, 68, 0.3); }
+    .icon-button { width: 2rem; height: 2rem; padding: 0; border-radius: 50%; }
+
+    .empty-state { text-align: center; display: grid; gap: 0.75rem; justify-items: center; }
+    .status-message { color: #cbd5e1; text-align: center; }
+    .status-message.error { border-color: rgba(239, 68, 68, 0.28); color: #fecaca; }
+    .shimmer { position: relative; overflow: hidden; }
+    .shimmer::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); animation: shimmer 1.4s infinite; }
+
+    .modal-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 1rem; background: rgba(2, 6, 23, 0.72); backdrop-filter: blur(5px); }
+    .modal-content { width: min(760px, 100%); max-height: 90vh; overflow: auto; border-radius: 1.2rem; padding: 1.5rem; }
+    .builder-modal { width: min(980px, 100%); }
+    .run-modal { width: min(760px, 100%); }
+    form, .execution-plan { display: grid; gap: 1rem; }
+    label { display: grid; gap: 0.5rem; color: #dbeafe; font-weight: 800; }
+    .agent-picker, .execution-plan { padding: 1rem; border-radius: 1rem; background: rgba(186, 230, 253, 0.06); border: 1px solid rgba(186, 230, 253, 0.1); }
+    .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.65rem; margin-top: 0.8rem; }
+    .agent-grid button { display: grid; gap: 0.2rem; text-align: left; }
+    .agent-grid small { color: #9fb0c2; }
+    .template-preview strong { width: 100%; color: #f8fafc; }
+    .execution-plan.compact { margin-bottom: 1rem; }
+
+    @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+    @media (max-width: 760px) {
+      .studio-hero, .toolbar, .card-header, .card-actions, .form-actions, .modal-header, .picker-header { flex-direction: column; align-items: stretch; }
+      .filters { flex-direction: column; }
+      .workflows-grid { grid-template-columns: 1fr; }
+      .card-actions { display: grid; grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 540px) {
+      .studio-hero { padding: 1rem; }
+      .studio-hero h2 { font-size: 1rem; }
+      .modal-content { border-radius: 1rem 1rem 0 0; max-height: 92vh; }
+      .flow-preview, .builder-flow { grid-template-columns: repeat(var(--node-count), minmax(110px, 1fr)); }
+      .agent-grid { grid-template-columns: 1fr 1fr; }
+    }
+  

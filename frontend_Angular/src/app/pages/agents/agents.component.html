@@ -1,0 +1,97 @@
+﻿<app-page-heading eyebrow="Agents" title="" description=""></app-page-heading>
+
+<section class="card-panel">
+  <div class="panel-header">
+    <h2>Agents </h2>
+    <button class="btn-primary" (click)="showCreateForm = true">+ Nouvel agent</button>
+  </div>
+
+  <div class="filters">
+    <input type="text" placeholder="Rechercher par nom ou famille..." [(ngModel)]="searchQuery" (input)="onSearch()"
+      class="search-input" />
+    <select [(ngModel)]="selectedFamily" (change)="onFilterChange()" class="filter-select">
+      <option value="">Toutes les familles</option>
+      <option value="nlp">NLP</option>
+      <option value="utils">Utils</option>
+      <option value="weather">Weather</option>
+      <option value="cv">Computer Vision</option>
+      <option value="ml">Machine Learning</option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="status-message">Chargement des agents...</div>
+  <div *ngIf="error" class="status-message error">{{ error }}</div>
+
+  <div class="table-wrapper">
+    <table *ngIf="!loading && agents.length > 0" class="agents-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Famille</th>
+          <th>Version</th>
+          <th>Endpoint</th>
+          <th>Tags</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let agent of agents">
+          <td>{{ agent.name }}</td>
+          <td>{{ agent.family }}</td>
+          <td>{{ agent.version }}</td>
+          <td class="endpoint-cell" [title]="agent.endpointUrl"><code>{{ agent.endpointUrl }}</code></td>
+          <td>
+            <span *ngFor="let tag of agent.tags" class="tag">{{ tag }}</span>
+          </td>
+          <td>
+            <span class="status" [class.active]="agent.active">
+              {{ agent.active ? 'Actif' : 'Inactif' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button (click)="editAgent(agent)" class="btn-small">Ã‰diter</button>
+            <button (click)="deleteAgent(agent.id)" class="btn-small danger">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && agents.length === 0" class="status-message">
+    Aucun agent trouvé
+  </div>
+</section>
+
+<!-- Modal de création/édition -->
+<div *ngIf="showCreateForm" class="modal-overlay" (click)="closeForm()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>{{ editingAgent ? 'Ã‰diter l\'agent' : 'Créer un nouvel agent' }}</h3>
+    <form (ngSubmit)="saveAgent()">
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="formData.name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label>Famille</label>
+        <input type="text" [(ngModel)]="formData.family" name="family" required />
+      </div>
+      <div class="form-group">
+        <label>Version</label>
+        <input type="text" [(ngModel)]="formData.version" name="version" required />
+      </div>
+      <div class="form-group">
+        <label>Endpoint URL</label>
+        <input type="text" [(ngModel)]="formData.endpointUrl" name="endpointUrl" required />
+      </div>
+      <div class="form-actions">
+        <button type="button" (click)="closeForm()" class="btn-secondary">
+          Annuler
+        </button>
+        <button type="submit" class="btn-primary">
+          {{ editingAgent ? 'Mettre à jour' : 'Créer' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

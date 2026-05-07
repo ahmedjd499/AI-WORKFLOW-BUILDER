@@ -1,0 +1,144 @@
+﻿
+    <app-page-heading
+      eyebrow="Executions"
+      title="Resultats des workflows"
+      description="Consultez les runs, la progression des agents, les inputs, outputs et logs dans une vue fluide."
+    ></app-page-heading>
+
+    <section class="insight-grid">
+      <article class="insight-card">
+        <span>Total</span>
+        <strong>{{ runs().length }}</strong>
+        <small>executions chargees</small>
+      </article>
+      <article class="insight-card success">
+        <span>Reussies</span>
+        <strong>{{ successRuns() }}</strong>
+        <small>runs termines avec succes</small>
+      </article>
+      <article class="insight-card running">
+        <span>En cours</span>
+        <strong>{{ activeRuns() }}</strong>
+        <small>pending ou running</small>
+      </article>
+      <article class="insight-card failed">
+        <span>Echecs</span>
+        <strong>{{ failedRuns() }}</strong>
+        <small>runs a analyser</small>
+      </article>
+    </section>
+
+    <section class="card-panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-kicker">Historique</span>
+          <h2>Executions recentes</h2>
+        </div>
+        <button type="button" class="btn-small" (click)="loadRuns()" [disabled]="loading()">
+          {{ loading() ? 'Chargement...' : 'Actualiser' }}
+        </button>
+      </div>
+
+      <div *ngIf="loading()" class="status-message shimmer">Chargement des executions...</div>
+      <div *ngIf="error()" class="status-message error">{{ error() }}</div>
+
+      <div *ngIf="!loading() && runs().length > 0" class="runs-list">
+        <article *ngFor="let run of runs(); trackBy: trackRun" class="run-card" (click)="viewRun(run)">
+          <div class="run-main">
+            <span class="status" [ngClass]="statusClass(run.status)">{{ getStatusLabel(run.status) }}</span>
+            <div>
+              <h3>{{ run.workflow?.name || run.workflowId }}</h3>
+              <p>{{ compactPrompt(run.prompt) }}</p>
+            </div>
+          </div>
+
+          <div class="run-meta">
+            <span><strong>{{ run.id.substring(0, 8) }}</strong>ID</span>
+            <span><strong>{{ durationLabel(run.durationMs) }}</strong>Duree</span>
+            <span><strong>{{ run.startedAt | date:'d/M/yyyy' }}</strong>{{ run.startedAt | date:'HH:mm' }}</span>
+          </div>
+
+          <button type="button" class="details-button" (click)="viewRun(run); $event.stopPropagation()">
+            Voir resultat
+          </button>
+        </article>
+      </div>
+
+      <div *ngIf="!loading() && runs().length === 0" class="empty-state">
+        <h3>Aucune execution trouvee</h3>
+        <p>Lancez un workflow depuis le studio pour voir les resultats ici.</p>
+      </div>
+    </section>
+
+    <div *ngIf="selectedRun() as activeRun" class="modal-overlay" (click)="closeDetails()">
+      <aside class="result-drawer" (click)="$event.stopPropagation()">
+        <div class="drawer-header">
+          <div>
+            <span class="panel-kicker">Run detail</span>
+            <h3>{{ activeRun.workflow?.name || activeRun.workflowId }}</h3>
+            <p>{{ activeRun.id }}</p>
+          </div>
+          <button type="button" class="icon-button" (click)="closeDetails()">x</button>
+        </div>
+
+        <div class="result-hero">
+          <span class="status" [ngClass]="statusClass(activeRun.status)">{{ getStatusLabel(activeRun.status) }}</span>
+          <div>
+            <span>Duree</span>
+            <strong>{{ activeRun.durationMs ? durationLabel(activeRun.durationMs) : 'En cours' }}</strong>
+          </div>
+          <div>
+            <span>Etapes</span>
+            <strong>{{ activeRun.steps?.length ?? 0 }}</strong>
+          </div>
+        </div>
+
+        <section class="prompt-card">
+          <span>Prompt lance</span>
+          <p>{{ activeRun.prompt }}</p>
+        </section>
+
+        <section *ngIf="activeRun.error" class="error-card">
+          <strong>Erreur</strong>
+          <p>{{ activeRun.error }}</p>
+        </section>
+
+        <section class="timeline" *ngIf="(activeRun.steps?.length ?? 0) > 0">
+          <article *ngFor="let step of activeRun.steps ?? []; let index = index; trackBy: trackStep" class="step-card">
+            <div class="step-marker">{{ index + 1 }}</div>
+            <div class="step-content">
+              <div class="step-header">
+                <div>
+                  <h4>{{ step.nodeId }}</h4>
+                  <p>{{ step.agentId }}</p>
+                </div>
+                <span class="status" [ngClass]="statusClass(step.status)">{{ getStatusLabel(step.status) }}</span>
+              </div>
+
+              <div class="io-grid">
+                <div class="io-box">
+                  <span>Input</span>
+                  <pre>{{ prettyJson(step.inputPreview) }}</pre>
+                </div>
+                <div class="io-box output">
+                  <span>Output</span>
+                  <pre>{{ prettyJson(step.outputPreview) }}</pre>
+                </div>
+              </div>
+
+              <div *ngIf="step.logs.length > 0" class="logs-panel">
+                <span>Logs</span>
+                <ul>
+                  <li *ngFor="let log of step.logs">{{ log }}</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <div *ngIf="(activeRun.steps?.length ?? 0) === 0" class="status-message">
+          Les etapes sont en cours de creation. Cette fenetre se rafraichit automatiquement.
+        </div>
+      </aside>
+    </div>
+  

@@ -1,11 +1,11 @@
-import { Component, OnInit, computed, inject, signal, OnDestroy, ViewChild, ElementRef, effect } from '@angular/core';
+﻿import { Component, OnInit, computed, inject, signal, OnDestroy, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { WorkflowService } from '../services/workflow.service';
-import { RunService } from '../services/run.service';
-import { PageHeadingComponent } from '../components/page-heading.component';
-import { Workflow, WorkflowNode, Run, RunStep } from '../models';
+import { WorkflowService } from '../../services/workflow.service';
+import { RunService } from '../../services/run.service';
+import { PageHeadingComponent } from '../../components/page-heading/page-heading.component';
+import { Workflow, WorkflowNode, Run, RunStep } from '../../models';
 
 type NodeStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED' | 'SKIPPED';
 
@@ -93,8 +93,8 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
 
   runButtonLabel(): string {
     if (this.running()) return 'Exécution en cours...';
-    if (this.currentRun()) return '↺ Relancer';
-    return '▶ Lancer l\'exécution';
+    if (this.currentRun()) return 'â†º Relancer';
+    return 'â–¶ Lancer l\'exécution';
   }
 
   ngOnDestroy() {
@@ -138,7 +138,7 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
       try {
         payload = JSON.parse(event.data);
       } catch {
-        this.addLog('Événement de log invalide reçu du serveur.', 'warn');
+        this.addLog('Ã‰vénement de log invalide reÃ§u du serveur.', 'warn');
         return;
       }
 
@@ -235,7 +235,7 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
         const durationMs = Number(data['durationMs'] || 0);
         this.running.set(false);
         this.currentRun.update((run) => (run ? { ...run, status: 'SUCCESS', durationMs } : run));
-        this.addLog(`Exécution terminée avec succès (${durationMs}ms)`, 'success');
+        this.addLog(`Exécution terminée avec succÃ¨s (${durationMs}ms)`, 'success');
         this.syncRunDetails(runId);
         this.eventSource?.close();
         this.eventSource = null;
@@ -383,7 +383,7 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
   generateEdgePath(edge: any): string {
     const sourceNode = this.workflow()?.nodes.find(n => n.id === edge.source);
     const targetNode = this.workflow()?.nodes.find(n => n.id === edge.target);
-    
+
     if (!sourceNode || !targetNode) return '';
 
     const x1 = sourceNode.position.x + 220;
@@ -399,3 +399,4 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
     this.router.navigate(['/workflows']);
   }
 }
+

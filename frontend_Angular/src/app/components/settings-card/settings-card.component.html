@@ -1,0 +1,8 @@
+<article class="settings-card">
+  <h3>{{ title }}</h3>
+  <p>{{ description }}</p>
+  <div class="setting-row" *ngFor="let item of items">
+    <span>{{ item.label }}</span>
+    <strong>{{ item.value }}</strong>
+  </div>
+</article>

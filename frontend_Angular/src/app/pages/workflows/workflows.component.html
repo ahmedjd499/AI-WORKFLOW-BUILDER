@@ -1,0 +1,29 @@
+﻿<app-page-heading eyebrow="Workflows" title="Concevez et suivez vos processus automatisés"
+  description="Enregistrez, planifiez et analysez chaque workflow avec des vues intuitives."></app-page-heading>
+
+<section *ngIf="loading" class="status-panel">Chargement des workflows...</section>
+<section *ngIf="error" class="status-panel error">{{ error }}</section>
+
+<section *ngIf="!loading && !error" class="workflow-grid">
+  <app-workflow-card *ngFor="let workflow of workflows" [name]="workflow.name" [status]="workflow.status"
+    [statusClass]="workflow.statusClass" [description]="workflow.description" [updated]="workflow.updated"
+    [tasks]="workflow.tasks"></app-workflow-card>
+</section>
+
+<section *ngIf="!loading && !error" class="data-panel">
+  <h3>Récapitulatif des workflows</h3>
+  <div class="summary-grid">
+    <div>
+      <span>Total</span>
+      <strong>{{ workflows.length }} workflows</strong>
+    </div>
+    <div>
+      <span>Automatisés</span>
+      <strong>{{ automatedCount }}</strong>
+    </div>
+    <div>
+      <span>En erreur</span>
+      <strong>{{ errorCount }}</strong>
+    </div>
+  </div>
+</section>

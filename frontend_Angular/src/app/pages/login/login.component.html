@@ -1,0 +1,51 @@
+﻿<app-page-heading eyebrow="Connexion" title="Accédez à votre espace TekUp"
+  description="Connexion sécurisée pour piloter vos workflows IA et surveiller les indicateurs clés."></app-page-heading>
+
+<section class="auth-shell">
+  <div class="auth-card">
+    <form #loginForm="ngForm" (ngSubmit)="submit(loginForm)">
+      <label>
+        Adresse email
+        <input name="email" [(ngModel)]="credentials.email" required type="email" placeholder="votre@exemple.com" />
+      </label>
+
+      <label>
+        Mot de passe
+        <input name="password" [(ngModel)]="credentials.password" required type="password"
+          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+      </label>
+
+      <button type="submit" [disabled]="loginForm.invalid || loading">
+        <span *ngIf="loading" class="spinner"></span>
+        <span>{{ loading ? 'Connexion en coursâ€¦' : 'Se connecter' }}</span>
+      </button>
+
+      <div *ngIf="successMsg()" class="alert-success">
+        <span class="alert-icon">âœ“</span>
+        <span>{{ successMsg() }}</span>
+      </div>
+
+      <div *ngIf="error()" class="alert-error" (click)="dismissError()">
+        <span class="alert-icon">âœ•</span>
+        <span>{{ error() }}</span>
+        <small class="alert-hint">Cliquer pour fermer</small>
+      </div>
+
+      <div class="hint-row">
+        <span>Pas encore de compte ?</span>
+        <a [routerLink]="['/settings']">Créer un espace</a>
+      </div>
+    </form>
+
+    <div class="login-help">
+      <div>
+        <strong>Support 24/7</strong>
+        <p>Assistance continue pour vos déploiements et automatisations.</p>
+      </div>
+      <div>
+        <strong>Intégrations</strong>
+        <p>Connexion avec vos outils CRM, ticketing et data science.</p>
+      </div>
+    </div>
+  </div>
+</section>

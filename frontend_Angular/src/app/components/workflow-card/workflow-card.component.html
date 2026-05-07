@@ -1,0 +1,11 @@
+<article class="workflow-card">
+  <div class="card-header">
+    <span class="workflow-name">{{ name }}</span>
+    <span class="workflow-status" [class.active]="statusClass === 'active'" [class.paused]="statusClass === 'paused'" [class.error]="statusClass === 'error'">{{ status }}</span>
+  </div>
+  <p>{{ description }}</p>
+  <div class="card-footer">
+    <span>{{ updated }}</span>
+    <strong>{{ tasks }} tâches</strong>
+  </div>
+</article>

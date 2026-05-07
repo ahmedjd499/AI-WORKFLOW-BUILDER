@@ -1,0 +1,7 @@
+﻿<app-page-heading eyebrow="ParamÃ¨tres" title="Personnalisez votre environnement TekUp"
+  description="Modifiez les préférences dâ€™accÃ¨s, la langue et les alertes de vos workflows."></app-page-heading>
+
+<section class="settings-grid">
+  <app-settings-card *ngFor="let card of cards" [title]="card.title" [description]="card.description"
+    [items]="card.items"></app-settings-card>
+</section>

@@ -1,0 +1,50 @@
+﻿<app-page-heading eyebrow="Designer Pro" title="Vue professionnelle du workflow"
+  description="Affiche la topologie de vos agents et les liaisons entre eux dans un format visuel professionnel."></app-page-heading>
+
+<section class="builder-toolbar">
+  <button class="btn-secondary" (click)="goBack()">â† Retour aux workflows</button>
+  <div class="toolbar-status">
+    <span class="tag">Pro View</span>
+    <span>{{ workflow()?.nodes?.length || 0 }} nÅ“uds</span>
+    <span>{{ workflow()?.edges?.length || 0 }} liaisons</span>
+  </div>
+</section>
+
+<section *ngIf="loading()" class="status-message">Chargement du workflow...</section>
+<section *ngIf="error()" class="status-message error">{{ error() }}</section>
+
+<section *ngIf="workflow() as wf" class="builder-shell">
+  <aside class="builder-sidebar">
+    <div class="panel">
+      <h3>{{ wf.name }}</h3>
+      <p>{{ wf.nodes.length }} nÅ“uds Â· {{ wf.edges.length }} liaisons Â· v{{ wf.version }}</p>
+      <div class="panel-row"><strong>Status</strong><span>{{ getStatusLabel(wf.status) }}</span></div>
+      <div class="panel-row"><strong>Mis à jour</strong><span>{{ wf.updatedAt | date:'d/M/yyyy HH:mm' }}</span></div>
+      <div class="panel-row"><strong>Créé par</strong><span>{{ wf.createdBy }}</span></div>
+    </div>
+    <div class="panel">
+      <h4>Liaisons</h4>
+      <div *ngIf="wf.edges.length === 0" class="no-data">Aucune liaison définie.</div>
+      <div *ngFor="let edge of wf.edges" class="edge-item">{{ edge.source }} â†’ {{ edge.target }}</div>
+    </div>
+    <div class="panel">
+      <h4>Instructions</h4>
+      <p>Utilisez cette vue pour analyser les connexions entre agents et vérifier la topologie avant exécution.</p>
+    </div>
+  </aside>
+
+  <div class="canvas-shell">
+    <div class="canvas">
+      <svg class="edge-layer" preserveAspectRatio="none">
+        <path *ngFor="let edge of edgePaths()" [attr.d]="edge.path" class="edge-path" />
+      </svg>
+
+      <div *ngFor="let node of wf.nodes" class="designer-node" [style.left.px]="node.position.x || 0"
+        [style.top.px]="node.position.y || 0">
+        <div class="node-header">{{ node.label }}</div>
+        <div class="node-meta">Agent ID: {{ node.agentId }}</div>
+        <div class="node-footer">{{ node.errorPolicy }} Â· retry {{ node.maxRetries }}</div>
+      </div>
+    </div>
+  </div>
+</section>
