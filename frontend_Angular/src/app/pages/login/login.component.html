@@ -1,8 +1,6 @@
-﻿<app-page-heading eyebrow="Connexion" title="Accédez à votre espace TekUp"
-  description="Connexion sécurisée pour piloter vos workflows IA et surveiller les indicateurs clés."></app-page-heading>
-
 <section class="auth-shell">
   <div class="auth-card">
+    <h1>Connexion</h1>
     <form #loginForm="ngForm" (ngSubmit)="submit(loginForm)">
       <label>
         Adresse email
@@ -30,21 +28,7 @@
         <small class="alert-hint">Cliquer pour fermer</small>
       </div>
 
-      <div class="hint-row">
-        <span>Pas encore de compte ?</span>
-        <a [routerLink]="['/settings']">Créer un espace</a>
-      </div>
     </form>
 
-    <div class="login-help">
-      <div>
-        <strong>Support 24/7</strong>
-        <p>Assistance continue pour vos déploiements et automatisations.</p>
-      </div>
-      <div>
-        <strong>Intégrations</strong>
-        <p>Connexion avec vos outils CRM, ticketing et data science.</p>
-      </div>
-    </div>
   </div>
 </section>

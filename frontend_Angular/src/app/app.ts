@@ -21,9 +21,9 @@ interface NavItem {
 export class App {
   protected readonly auth = inject(AuthService);
   protected readonly data = inject(AppDataService);
-  protected readonly title = signal('TekUp');
   protected readonly sidebarOpen = signal(false);
   protected readonly sidebarCollapsed = signal(false);
+  private readonly mobileBreakpoint = 980;
 
   protected readonly navItems = computed<NavItem[]>(() => {
     if (!this.auth.isAuthenticated) {
@@ -55,15 +55,20 @@ export class App {
   }
 
   protected toggleSidebar(): void {
-    this.sidebarOpen.update((open) => !open);
-  }
+    if (this.isMobileViewport()) {
+      this.sidebarOpen.update((open) => !open);
+      return;
+    }
 
-  protected toggleCollapse(): void {
     this.sidebarCollapsed.update((collapsed) => !collapsed);
   }
 
   protected closeMobileSidebar(): void {
     this.sidebarOpen.set(false);
+  }
+
+  private isMobileViewport(): boolean {
+    return window.matchMedia(`(max-width: ${this.mobileBreakpoint}px)`).matches;
   }
 
   protected logout(): void {

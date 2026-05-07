@@ -1,22 +1,6 @@
-﻿<div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
+<div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
   <aside class="sidebar" [class.open]="sidebarOpen()" aria-label="Navigation principale">
-    <button type="button" class="sidebar-close" (click)="closeMobileSidebar()" aria-label="Fermer le menu">✕</button>
-
-    <div class="sidebar-top-actions" *ngIf="auth.isAuthenticated">
-      <button type="button" class="collapse-button" (click)="toggleCollapse()"
-        [title]="sidebarCollapsed() ? 'Etendre' : 'Reduire'">
-        {{ sidebarCollapsed() ? '⇥' : '⇤' }}
-      </button>
-    </div>
-
-    <div class="brand">
-      <img src="images/tek-up.png" alt="Logo TekUp" class="brand-logo" />
-      <div class="brand-copy">
-        <span class="brand-label">{{ title() }}</span>
-        <small>AI Workflow Control</small>
-      </div>
-    </div>
-
+    <br><br><br>
     <nav class="nav-menu">
       <a *ngFor="let item of navItems()" [routerLink]="item.path" routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: item.path === '' }" (click)="closeMobileSidebar()">
@@ -54,7 +38,7 @@
 
   <section class="workspace">
     <header class="topbar">
-      <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Ouvrir la navigation">
+      <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Basculer la navigation">
         <span></span>
         <span></span>
         <span></span>
@@ -68,13 +52,7 @@
       </div>
 
       <div class="topbar-spacer"></div>
-      <div class="topbar-actions" *ngIf="auth.isAuthenticated">
-        <div class="search">
-          <input type="text" placeholder="Rechercher..." aria-label="Recherche" />
-        </div>
-        <button type="button" class="btn-primary">Nouveau</button>
-        <button type="button" class="logout-button" (click)="logout()">{{ userInitial() }}</button>
-      </div>
+
     </header>
 
     <main class="main-content">
