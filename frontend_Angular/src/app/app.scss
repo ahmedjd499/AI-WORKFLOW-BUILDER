@@ -181,7 +181,7 @@ select {
 
 .nav-menu a.active {
   transform: none;
-  background: rgba(37, 99, 235, 0.06);
+  background: rgba(37, 99, 235, 0.12);
   color: var(--accent);
   box-shadow: none;
   border-left: 3px solid var(--accent);
@@ -202,11 +202,6 @@ select {
   font-weight: 900;
   letter-spacing: 0.08em;
   transition: background 0.22s ease, color 0.22s ease;
-}
-
-.nav-menu a.active .nav-icon {
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--accent);
 }
 
 .sidebar-card {
@@ -361,10 +356,6 @@ select {
 .sidebar-collapsed .nav-menu a {
   padding: 0.6rem;
   justify-content: center;
-}
-
-.sidebar-collapsed .nav-menu a.active {
-  box-shadow: none;
 }
 
 .mobile-overlay {

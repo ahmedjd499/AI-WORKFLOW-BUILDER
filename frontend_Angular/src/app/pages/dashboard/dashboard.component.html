@@ -1,50 +1,102 @@
-﻿<app-page-heading eyebrow="Dashboard"></app-page-heading>
+<app-page-heading eyebrow="Dashboard"></app-page-heading>
+<div class="dashboard-shell">
+  <section *ngIf="loading()" class="status-panel loading">Chargement des indicateurs...</section>
+  <section *ngIf="error()" class="status-panel error">{{ error() }}</section>
 
-<section *ngIf="loading()" class="status-panel">Chargement des indicateurs...</section>
-<section *ngIf="error()" class="status-panel error">{{ error() }}</section>
-
-<section *ngIf="!loading() && !error()" class="stats-grid">
-  <app-stat-card label="Executions" [value]="kpis()?.totalRuns ?? 0" description="Nombre total de runs"></app-stat-card>
-  <app-stat-card label="Taux de reussite" [value]="successRateLabel"
-    description="Runs termines en succes"></app-stat-card>
-  <app-stat-card label="Duree moyenne" [value]="durationLabel(kpis()?.duration?.avg)"
-    description="Temps moyen d'execution"></app-stat-card>
-  <app-stat-card label="P95" [value]="durationLabel(kpis()?.duration?.p95)" description="95e percentile"
-    [accent]="true"></app-stat-card>
-</section>
-
-<section class="board-grid" *ngIf="!loading() && !error()">
-  <div class="panel card-panel">
-    <div class="panel-header">
-      <h3>Top agents</h3>
-      <span>{{ kpis()?.topAgents?.length ?? 0 }} agents mesures</span>
+  <section *ngIf="!loading() && !error()" class="hero-panel">
+    <div class="hero-copy">
+      <h1>Vue d'ensemble des automatisations</h1>
+      <p class="hero-description">
+        Suivez la sante des runs, reperez les agents les plus actifs et isolez les familles qui generent des erreurs.
+      </p>
     </div>
-    <ul class="metric-list">
-      <li *ngFor="let agent of kpis()?.topAgents ?? []">
-        <span>{{ agent.name }} <small>{{ agent.family }}</small></span>
-        <strong>{{ agent.usage_count }} usages</strong>
-      </li>
-      <li *ngIf="(kpis()?.topAgents?.length ?? 0) === 0">
-        <span>Aucun run agent pour le moment</span>
-        <strong>0</strong>
-      </li>
-    </ul>
-  </div>
+  </section>
 
-  <div class="panel card-panel">
-    <div class="panel-header">
-      <h3>Erreurs par famille</h3>
-      <span>RunStep FAILED</span>
+  <section *ngIf="!loading() && !error()" class="stats-grid">
+    <app-stat-card label="Executions" [value]="kpis()?.totalRuns ?? 0"
+      description="Nombre total de runs"></app-stat-card>
+    <app-stat-card label="Taux de reussite" [value]="successRateLabel"
+      description="Runs termines en succes"></app-stat-card>
+    <app-stat-card label="Duree moyenne" [value]="durationLabel(kpis()?.duration?.avg)"
+      description="Temps moyen d'execution"></app-stat-card>
+    <app-stat-card label="P95" [value]="durationLabel(kpis()?.duration?.p95)" description="95e percentile"
+      [accent]="true"></app-stat-card>
+  </section>
+
+  <section class="board-grid" *ngIf="!loading() && !error()">
+
+
+    <div class="insight-stack">
+      <article class="panel card-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Top agents</h3>
+            <span>{{ topAgents.length }} agents mesures</span>
+          </div>
+        </div>
+        <ul class="metric-list compact-list">
+          <li *ngFor="let agent of topAgents; trackBy: trackByAgent">
+            <div class="metric-copy">
+              <span>{{ agent.name }}</span>
+              <small>{{ agent.family }} • {{ agent.success_count }}/{{ agent.usage_count }} succes</small>
+            </div>
+            <strong>{{ agent.usage_count }} • {{ agentSuccessLabel(agent) }}</strong>
+          </li>
+          <li *ngIf="topAgents.length === 0" class="empty-row">
+            Aucun run agent pour le moment.
+          </li>
+        </ul>
+      </article>
+
+      <article class="panel card-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Erreurs par famille</h3>
+            <span>RunStep FAILED</span>
+          </div>
+          <strong>{{ highestErrorFamily?.family || 'None' }}</strong>
+        </div>
+        <ul class="metric-list compact-list">
+          <li *ngFor="let item of errorFamilies; trackBy: trackByFamily"
+            [class.hotspot]="highestErrorFamily?.family === item.family">
+            <div class="metric-copy">
+              <span>{{ item.family }}</span>
+              <small>{{ item.error_count }} erreurs detectees</small>
+            </div>
+            <strong>{{ item.error_count }}</strong>
+          </li>
+          <li *ngIf="errorFamilies.length === 0" class="empty-row">
+            Aucune erreur detectee.
+          </li>
+        </ul>
+      </article>
     </div>
-    <ul class="metric-list">
-      <li *ngFor="let item of kpis()?.errorsByFamily ?? []">
-        <span>{{ item.family }}</span>
-        <strong>{{ item.error_count }}</strong>
-      </li>
-      <li *ngIf="(kpis()?.errorsByFamily?.length ?? 0) === 0">
-        <span>Aucune erreur detectee</span>
-        <strong>0</strong>
-      </li>
-    </ul>
-  </div>
-</section>
+    <div class="panel card-panel distribution-panel">
+      <div class="panel-header">
+        <div>
+          <h3>Distribution des durees</h3>
+          <span>Repartition des runs par bucket</span>
+        </div>
+        <strong>{{ durationDistribution.length }} buckets</strong>
+      </div>
+
+      <ul class="distribution-list">
+        <li *ngFor="let bucket of durationDistribution; trackBy: trackByBucket">
+          <div class="distribution-row">
+            <div>
+              <span>{{ bucket.bucket }}</span>
+              <small>{{ bucket.count }} runs</small>
+            </div>
+            <strong>{{ bucket.count }}</strong>
+          </div>
+          <div class="distribution-track">
+            <span [style.width.%]="barWidth(bucket.count)"></span>
+          </div>
+        </li>
+        <li *ngIf="durationDistribution.length === 0" class="empty-row">
+          Aucune donnee de duree pour le moment.
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

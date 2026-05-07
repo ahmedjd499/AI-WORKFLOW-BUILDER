@@ -1,17 +1,17 @@
 .stat-card {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius) !important;
+  border-radius: .5rem !important;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   min-height: 140px;
   box-shadow: var(--shadow);
-  -webkit-border-radius: var(--radius) !important;
-  -moz-border-radius: var(--radius) !important;
-  -ms-border-radius: var(--radius) !important;
-  -o-border-radius: var(--radius) !important;
+  -webkit-border-radius: .5re !important;
+  -moz-border-radius: .5re !important;
+  -ms-border-radius: .5re !important;
+  -o-border-radius: .5re !important;
 }
 
 .stat-card.accent {

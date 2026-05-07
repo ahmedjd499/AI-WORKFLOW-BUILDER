@@ -1,11 +1,7 @@
 <div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
   <aside class="sidebar" [class.open]="sidebarOpen()" aria-label="Navigation principale">
     <div class="sidebar-header">
-      <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Basculer la navigation">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+
 
       <div class="brand">
         <img src="images/tek-up.png" alt="Logo TekUp" class="brand-logo" />
@@ -13,6 +9,11 @@
           <span class="brand-label">TekUp Studio</span>
         </div>
       </div>
+      <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Basculer la navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
     <nav class="nav-menu">
       <a *ngFor="let item of navItems()" [routerLink]="item.path" routerLinkActive="active"
