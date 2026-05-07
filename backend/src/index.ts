@@ -16,6 +16,9 @@ import kpiRoutes from './routes/kpis';
 
 const app = express();
 
+// Global settings
+app.set('trust proxy', 1);
+
 // Security
 app.use(helmet());
 app.use(cors({ origin: config.cors.origin, credentials: true }));
