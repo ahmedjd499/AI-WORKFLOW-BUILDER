@@ -14,7 +14,6 @@
         </div>
       </div>
     </div>
-
     <nav class="nav-menu">
       <a *ngFor="let item of navItems()" [routerLink]="item.path" routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: item.path === '' }" (click)="closeMobileSidebar()">
@@ -24,8 +23,8 @@
           <small>{{ item.hint }}</small>
         </span>
       </a>
-    </nav>
 
+    </nav>
 
 
     <div class="sidebar-footer" *ngIf="auth.isAuthenticated">

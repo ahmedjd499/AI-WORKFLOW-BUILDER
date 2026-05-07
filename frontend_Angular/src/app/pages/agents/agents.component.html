@@ -1,10 +1,7 @@
-﻿<app-page-heading eyebrow="Agents" title="" description=""></app-page-heading>
+<app-page-heading eyebrow="Agents" title=""></app-page-heading>
 
 <section class="card-panel">
-  <div class="panel-header">
-    <h2>Agents </h2>
-    <button class="btn-primary" (click)="showCreateForm = true">+ Nouvel agent</button>
-  </div>
+
 
   <div class="filters">
     <input type="text" placeholder="Rechercher par nom ou famille..." [(ngModel)]="searchQuery" (input)="onSearch()"
@@ -17,7 +14,10 @@
       <option value="cv">Computer Vision</option>
       <option value="ml">Machine Learning</option>
     </select>
+    <button class="btn-primary" (click)="showCreateForm = true">+ Nouvel agent</button>
+
   </div>
+
 
   <div *ngIf="loading" class="status-message">Chargement des agents...</div>
   <div *ngIf="error" class="status-message error">{{ error }}</div>
@@ -50,7 +50,7 @@
             </span>
           </td>
           <td class="actions">
-            <button (click)="editAgent(agent)" class="btn-small">Ã‰diter</button>
+            <button (click)="editAgent(agent)" class="btn-small">éditer</button>
             <button (click)="deleteAgent(agent.id)" class="btn-small danger">Supprimer</button>
           </td>
         </tr>

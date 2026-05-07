@@ -10,7 +10,5 @@ import { CommonModule } from '@angular/common';
 })
 export class PageHeadingComponent {
   @Input() eyebrow = '';
-  @Input() title = '';
-  @Input() description = '';
-  @Input() actionLabel?: string;
+
 }

@@ -33,6 +33,11 @@ interface LogEntry {
   message: string;
 }
 
+interface CanvasSize {
+  width: number;
+  height: number;
+}
+
 @Component({
   selector: 'app-workflow-playground',
   standalone: true,
@@ -75,6 +80,27 @@ export class WorkflowPlaygroundComponent implements OnInit, OnDestroy {
       map[node.id] = 'PENDING';
     });
     return { ...map, ...this.nodeStatusMap() };
+  });
+
+  graphCanvasSize = computed<CanvasSize>(() => {
+    const nodes = this.workflow()?.nodes ?? [];
+    const minWidth = 1200;
+    const minHeight = 800;
+    const nodeWidth = 260;
+    const nodeHeight = 120;
+    const padding = 160;
+
+    if (nodes.length === 0) {
+      return { width: minWidth, height: minHeight };
+    }
+
+    const maxX = Math.max(...nodes.map((node) => node.position.x + nodeWidth));
+    const maxY = Math.max(...nodes.map((node) => node.position.y + nodeHeight));
+
+    return {
+      width: Math.max(minWidth, maxX + padding),
+      height: Math.max(minHeight, maxY + padding)
+    };
   });
 
   ngOnInit() {

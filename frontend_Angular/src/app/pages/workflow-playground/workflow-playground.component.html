@@ -20,44 +20,47 @@
       </div>
     </div>
 
-    <svg class="execution-graph" #executionGraph>
-      <!-- Edges -->
-      <g class="edges">
-        <path *ngFor="let edge of workflow()?.edges || []" [attr.d]="generateEdgePath(edge)" class="edge-line"
-          stroke="#0b82f7" stroke-width="2.5" fill="none" />
-      </g>
-    </svg>
+    <div class="graph-canvas" [style.width.px]="graphCanvasSize().width" [style.height.px]="graphCanvasSize().height">
+      <svg class="execution-graph" #executionGraph [attr.width]="graphCanvasSize().width"
+        [attr.height]="graphCanvasSize().height">
+        <!-- Edges -->
+        <g class="edges">
+          <path *ngFor="let edge of workflow()?.edges || []" [attr.d]="generateEdgePath(edge)" class="edge-line"
+            stroke="#0b82f7" stroke-width="2.5" fill="none" />
+        </g>
+      </svg>
 
-    <!-- Nodes with status -->
-    <div class="nodes-execution">
-      <div *ngFor="let node of workflow()?.nodes || []" class="exec-node"
-        [class.status-pending]="nodeStatus()[node.id] === 'PENDING'"
-        [class.status-running]="nodeStatus()[node.id] === 'RUNNING'"
-        [class.status-success]="nodeStatus()[node.id] === 'SUCCESS'"
-        [class.status-failed]="nodeStatus()[node.id] === 'FAILED'"
-        [class.status-skipped]="nodeStatus()[node.id] === 'SKIPPED'" [style.left.px]="node.position.x"
-        [style.top.px]="node.position.y">
-        <div class="node-body">
-          <div class="node-status-icon">
-            <span *ngIf="nodeStatus()[node.id] === 'PENDING'">⏳</span>
-            <span *ngIf="nodeStatus()[node.id] === 'RUNNING'">⚙️</span>
-            <span *ngIf="nodeStatus()[node.id] === 'SUCCESS'">✓</span>
-            <span *ngIf="nodeStatus()[node.id] === 'FAILED'">✕</span>
-            <span *ngIf="nodeStatus()[node.id] === 'SKIPPED'">⊘</span>
+      <!-- Nodes with status -->
+      <div class="nodes-execution">
+        <div *ngFor="let node of workflow()?.nodes || []" class="exec-node"
+          [class.status-pending]="nodeStatus()[node.id] === 'PENDING'"
+          [class.status-running]="nodeStatus()[node.id] === 'RUNNING'"
+          [class.status-success]="nodeStatus()[node.id] === 'SUCCESS'"
+          [class.status-failed]="nodeStatus()[node.id] === 'FAILED'"
+          [class.status-skipped]="nodeStatus()[node.id] === 'SKIPPED'" [style.left.px]="node.position.x"
+          [style.top.px]="node.position.y">
+          <div class="node-body">
+            <div class="node-status-icon">
+              <span *ngIf="nodeStatus()[node.id] === 'PENDING'">⏳</span>
+              <span *ngIf="nodeStatus()[node.id] === 'RUNNING'">⚙️</span>
+              <span *ngIf="nodeStatus()[node.id] === 'SUCCESS'">✓</span>
+              <span *ngIf="nodeStatus()[node.id] === 'FAILED'">✕</span>
+              <span *ngIf="nodeStatus()[node.id] === 'SKIPPED'">⊘</span>
+            </div>
+            <div class="node-content">
+              <strong>{{ node.label }}</strong>
+              <small>{{ nodeStatus()[node.id] || 'PENDING' }}</small>
+            </div>
           </div>
-          <div class="node-content">
-            <strong>{{ node.label }}</strong>
-            <small>{{ nodeStatus()[node.id] || 'PENDING' }}</small>
-          </div>
+
+          <!-- Handles -->
+          <div class="handle handle-left"></div>
+          <div class="handle handle-right"></div>
         </div>
-
-        <!-- Handles -->
-        <div class="handle handle-left"></div>
-        <div class="handle handle-right"></div>
       </div>
-    </div>
 
-    <div class="canvas-grid"></div>
+      <div class="canvas-grid"></div>
+    </div>
   </main>
 
   <!-- Right: Control & Logs -->
