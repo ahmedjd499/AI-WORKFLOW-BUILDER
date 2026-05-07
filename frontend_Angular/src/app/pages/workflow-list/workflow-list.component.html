@@ -33,25 +33,35 @@
 <section *ngIf="filteredWorkflows().length > 0" class="workflows-grid">
   <article *ngFor="let workflow of filteredWorkflows(); trackBy: trackWorkflow" class="workflow-card">
     <div class="card-header">
-      <div>
+      <div class="title-block">
+        <span class="card-kicker">Workflow</span>
         <h3>{{ workflow.name }}</h3>
-        <p>{{ workflow.nodes.length }} noeud(s) · {{ workflow.edges.length }} liaison(s) · v{{ workflow.version }}</p>
+        <p>Derniere mise a jour {{ workflow.updatedAt | date:'d/M/yyyy HH:mm' }}</p>
       </div>
       <span class="status" [class]="'status status-' + workflow.status.toLowerCase()">
         {{ getStatusLabel(workflow.status) }}
       </span>
     </div>
 
-    <div class="flow-preview" [style.--node-count]="workflow.nodes.length || 1">
-      <div *ngFor="let node of workflow.nodes; let index = index; trackBy: trackNode" class="flow-node">
-        <span>{{ index + 1 }}</span>
-        <strong>{{ node.label }}</strong>
-        <small>{{ node.errorPolicy }} · retry {{ node.maxRetries ?? 0 }}</small>
-      </div>
-      <div *ngIf="workflow.nodes.length === 0" class="flow-node empty">
-        <span>0</span>
-        <strong>Aucun noeud</strong>
-        <small>Ajoutez des agents</small>
+    <div class="card-stats">
+      <span><strong>{{ workflow.nodes.length }}</strong> noeud(s)</span>
+      <span><strong>{{ workflow.edges.length }}</strong> liaison(s)</span>
+      <span><strong>v{{ workflow.version }}</strong> version</span>
+    </div>
+
+    <div class="flow-preview-wrap">
+      <span class="kicker">Execution path</span>
+      <div class="flow-preview" [style.--node-count]="workflow.nodes.length || 1">
+        <div *ngFor="let node of workflow.nodes; let index = index; trackBy: trackNode" class="flow-node">
+          <span>{{ index + 1 }}</span>
+          <strong>{{ node.label }}</strong>
+          <small>{{ node.errorPolicy }} · retry {{ node.maxRetries ?? 0 }}</small>
+        </div>
+        <div *ngIf="workflow.nodes.length === 0" class="flow-node empty">
+          <span>0</span>
+          <strong>Aucun noeud</strong>
+          <small>Ajoutez des agents</small>
+        </div>
       </div>
     </div>
 
@@ -60,15 +70,15 @@
     </div>
 
     <div class="card-meta">
-      <span>Mis a jour {{ workflow.updatedAt | date:'d/M/yyyy HH:mm' }}</span>
-      <span>{{ workflow.createdAt | date:'d/M/yyyy' }}</span>
+      <span>Cree le {{ workflow.createdAt | date:'d/M/yyyy' }}</span>
+      <span>{{ workflow.nodes.length > 0 ? 'Pret a executer' : 'A completer' }}</span>
     </div>
 
     <div class="card-actions">
-      <button class="btn-edit" (click)="navigateToEditor(workflow)">📝 Edit</button>
-      <button class="btn-run" (click)="navigateToPlayground(workflow)" [disabled]="workflow.nodes.length === 0">▶
-        Run</button>
-      <button class="danger" (click)="deleteWorkflow(workflow.id)">🗑️ Delete</button>
+      <button class="btn-edit" (click)="navigateToEditor(workflow)">Editer</button>
+      <button class="btn-run" (click)="navigateToPlayground(workflow)" [disabled]="workflow.nodes.length === 0">
+        Executer</button>
+      <button class="danger" (click)="deleteWorkflow(workflow.id)">Supprimer</button>
     </div>
   </article>
 </section>
