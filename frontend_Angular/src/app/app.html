@@ -1,6 +1,20 @@
 <div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
   <aside class="sidebar" [class.open]="sidebarOpen()" aria-label="Navigation principale">
-    <br><br><br>
+    <div class="sidebar-header">
+      <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Basculer la navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="brand">
+        <img src="images/tek-up.png" alt="Logo TekUp" class="brand-logo" />
+        <div class="brand-copy">
+          <span class="brand-label">TekUp Studio</span>
+        </div>
+      </div>
+    </div>
+
     <nav class="nav-menu">
       <a *ngFor="let item of navItems()" [routerLink]="item.path" routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: item.path === '' }" (click)="closeMobileSidebar()">
@@ -12,13 +26,7 @@
       </a>
     </nav>
 
-    <div class="sidebar-card" *ngIf="auth.isAuthenticated">
-      <span class="pulse"></span>
-      <div>
-        <strong>Orchestrateur actif</strong>
-        <small>Suivi temps reel des workflows</small>
-      </div>
-    </div>
+
 
     <div class="sidebar-footer" *ngIf="auth.isAuthenticated">
       <div class="user-chip">
@@ -37,23 +45,12 @@
   <div class="mobile-overlay" *ngIf="sidebarOpen()" (click)="closeMobileSidebar()"></div>
 
   <section class="workspace">
-    <header class="topbar">
-      <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Basculer la navigation">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <div class="topbar-brand">
-        <img src="images/tek-up.png" alt="Logo TekUp" class="topbar-logo" />
-        <div>
-          <span class="topbar-kicker">TekUp Studio</span>
-        </div>
-      </div>
-
-      <div class="topbar-spacer"></div>
-
-    </header>
+    <button type="button" class="sidebar-mobile-trigger" *ngIf="!sidebarOpen()" (click)="toggleSidebar()"
+      aria-label="Ouvrir la navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
     <main class="main-content">
       <section class="page-content">
